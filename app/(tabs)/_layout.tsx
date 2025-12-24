@@ -1,8 +1,9 @@
+import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Tabs } from "expo-router";
 import React from "react";
 
 import { HapticTab } from "@/components/haptic-tab";
-import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
@@ -18,20 +19,24 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="swipe"
+        name="index"
         options={{
-          title: "",
+          title: "Alben",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="cards-outline" color={color} />
+            <MaterialCommunityIcons
+              name="cards-outline"
+              size={28}
+              color={color}
+            />
           ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="history"
         options={{
-          title: "Explore",
+          title: "Historie",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
+            <AntDesign name="history" size={24} color={color} />
           ),
         }}
       />

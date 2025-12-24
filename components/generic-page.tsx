@@ -1,16 +1,20 @@
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { ReactNode } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, ViewStyle } from "react-native";
 import { ThemedView } from "./themed-view";
 
 const PADDING_TOP = 50;
 
-const GenericPage = (props: { children: ReactNode }) => {
+const GenericPage = (props: { children: ReactNode; style?: ViewStyle }) => {
   const backgroundColor = useThemeColor({}, "background");
 
   return (
     <ThemedView
-      style={[styles.container, { backgroundColor: backgroundColor }]}
+      style={[
+        styles.container,
+        { backgroundColor: backgroundColor },
+        props.style,
+      ]}
     >
       {props.children}
     </ThemedView>
