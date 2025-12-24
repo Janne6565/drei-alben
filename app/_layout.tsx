@@ -20,7 +20,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <GestureHandlerRootView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
