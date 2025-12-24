@@ -1,13 +1,14 @@
 import useSessionData from "@/features/sessionData/sessionData.hooks";
-import { Pressable, Text } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
+import IconButton from "../IconButton";
 
 const RefreshAlbumButton = () => {
   const { pickNewAlbum } = useSessionData();
 
   return (
-    <Pressable onPress={pickNewAlbum}>
-      <Text style={{ color: "white" }}>Refresh</Text>
-    </Pressable>
+    <IconButton onPress={pickNewAlbum}>
+      <Feather name="refresh-ccw" size={24} color="white" />
+    </IconButton>
   );
 };
 

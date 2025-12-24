@@ -1,19 +1,18 @@
-import { AlbumDto } from "@/types/albums";
-import { openAppleMusicSearch } from "@/util/music-provider-utils";
-import { Pressable, Text } from "react-native";
+import Entypo from "@expo/vector-icons/Entypo";
+import IconButton from "../IconButton";
 
-const OpenAlbumButton = (props: { album?: AlbumDto }) => {
+const OpenAlbumButton = (props: { onPress?: () => void }) => {
   const clickHandler = () => {
-    if (!props.album) {
+    if (!props.onPress) {
       return;
     }
-    openAppleMusicSearch(props.album.name + " Die Drei Fragezeichen");
+    props.onPress();
   };
 
   return (
-    <Pressable onPress={clickHandler}>
-      <Text style={{ color: "white" }}>Open</Text>
-    </Pressable>
+    <IconButton onPress={clickHandler}>
+      <Entypo name="controller-play" size={55} color="white" />
+    </IconButton>
   );
 };
 

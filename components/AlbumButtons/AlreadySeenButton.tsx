@@ -1,7 +1,8 @@
 import useSessionData from "@/features/sessionData/sessionData.hooks";
 import { setCurrentAlbumToSeen } from "@/features/sessionData/sessionData.slice";
 import { useAppDispatch } from "@/store/hooks";
-import { Pressable, Text } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import IconButton from "../IconButton";
 
 const AlreadySeenButton = () => {
   const dispatch = useAppDispatch();
@@ -12,9 +13,9 @@ const AlreadySeenButton = () => {
   };
 
   return (
-    <Pressable onPress={clickHandler}>
-      <Text style={{ color: "white" }}>Already Seen</Text>
-    </Pressable>
+    <IconButton onPress={clickHandler}>
+      <Ionicons name="checkmark-done" size={24} color="white" />
+    </IconButton>
   );
 };
 

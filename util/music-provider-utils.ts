@@ -1,12 +1,9 @@
 import { Linking } from "react-native";
 
-export const openAppleMusicSearch = async (p0: string) => {
-  const query = encodeURIComponent(p0);
-  const url = `https://music.apple.com/search?term=${query}`;
-
-  const supported = await Linking.canOpenURL(url);
+export const openLink = async (link: string) => {
+  const supported = await Linking.canOpenURL(link);
   if (supported) {
-    await Linking.openURL(url);
+    await Linking.openURL(link);
   } else {
     console.warn("Apple Music cannot be opened");
   }
