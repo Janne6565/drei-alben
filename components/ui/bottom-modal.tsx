@@ -1,18 +1,18 @@
-import BottomSheet from "@gorhom/bottom-sheet";
-import React, { ReactNode, Ref, useMemo } from "react";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import React, { ReactNode, Ref } from "react";
 
-const BottomModal = (props: { ref: Ref<BottomSheet>; children: ReactNode }) => {
-  const snapPoints = useMemo(() => ["25%", "60%"], []);
-
+const BottomModal = (props: {
+  ref: Ref<BottomSheetModal>;
+  children: ReactNode;
+}) => {
   return (
-    <BottomSheet
-      index={-1} // closed
+    <BottomSheetModal
       ref={props.ref}
-      snapPoints={snapPoints}
-      enablePanDownToClose
+      backgroundStyle={{ backgroundColor: "#121212" }}
+      handleIndicatorStyle={{ backgroundColor: "#444", width: 40 }}
     >
       {props.children}
-    </BottomSheet>
+    </BottomSheetModal>
   );
 };
 

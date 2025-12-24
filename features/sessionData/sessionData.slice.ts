@@ -24,9 +24,20 @@ const sessionData = createSlice({
     setCurrentAlbumToSeen(state) {
       state.data.seenAlbums[state.data.currentAlbumId] = true;
     },
+    dismissAlbum(state, albumId: PayloadAction<string>) {
+      delete state.data.seenAlbums[albumId.payload];
+    },
+    clearSeenAlbums(state) {
+      state.data.seenAlbums = {};
+    },
   },
 });
 
-export const { reset, setCurrentAlbum, setCurrentAlbumToSeen } =
-  sessionData.actions;
+export const {
+  reset,
+  setCurrentAlbum,
+  setCurrentAlbumToSeen,
+  dismissAlbum,
+  clearSeenAlbums,
+} = sessionData.actions;
 export default sessionData.reducer;
