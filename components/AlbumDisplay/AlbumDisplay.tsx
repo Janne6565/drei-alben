@@ -1,9 +1,6 @@
 import { AlbumDto } from "@/types/albums";
 import { toUppercase } from "@/util/string-utils";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
-import { useCallback, useRef } from "react";
-import { Text } from "react-native";
 import { ThemedText } from "../themed-text";
 import { ThemedView } from "../themed-view";
 
@@ -14,11 +11,6 @@ const AlbumDisplay = ({
   album: AlbumDto;
   onDescriptionClick: () => void;
 }) => {
-  const detailModalRef = useRef<BottomSheetModal>(null);
-  const openDetailModal = useCallback(() => {
-    detailModalRef.current?.present();
-  }, []);
-
   return (
     <>
       <ThemedView style={{ gap: 35 }}>
@@ -76,20 +68,6 @@ const AlbumDisplay = ({
           </ThemedView>
         </ThemedView>
       </ThemedView>
-      <BottomSheetModal
-        ref={detailModalRef}
-        snapPoints={["50%"]}
-        enablePanDownToClose
-        backgroundStyle={{
-          backgroundColor: "#121212",
-        }}
-        handleIndicatorStyle={{
-          backgroundColor: "#444",
-          width: 40,
-        }}
-      >
-        <Text>Test</Text>
-      </BottomSheetModal>
     </>
   );
 };

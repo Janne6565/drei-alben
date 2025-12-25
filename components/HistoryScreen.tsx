@@ -78,7 +78,7 @@ export const HistoryScreen = () => {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText style={styles.title}>History</ThemedText>
+      <ThemedText style={styles.title}>Historie</ThemedText>
       {seenAlbumsData.length > 0 ? (
         <>
           <FlatList
@@ -87,7 +87,7 @@ export const HistoryScreen = () => {
             keyExtractor={(item) => item.id}
           />
           <View style={styles.clearButtonContainer}>
-            <PrimaryButton label="Clear History" onPress={openClearAllModal} />
+            <PrimaryButton label="Zurücksetzen" onPress={openClearAllModal} />
           </View>
         </>
       ) : (
@@ -127,7 +127,7 @@ export const HistoryScreen = () => {
       >
         <BottomSheetView style={styles.modalContent}>
           <ThemedText style={styles.modalText}>
-            Are you sure you want to clear your entire history?
+            Bist du dir sicher, dass du deine gesamte Historie löschen willst?
           </ThemedText>
           <View style={styles.modalButtonContainer}>
             <Button title="Cancel" onPress={closeClearAllModal} />
