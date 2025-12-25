@@ -69,11 +69,11 @@ export function HistoryModals({
               alignItems: "center",
             }}
           >
-            <ThemedText>Alle Alben anzeigen</ThemedText>
+            <ThemedText>Nur gehörte Alben anzeigen</ThemedText>
             <Switch
-              value={showAllAlbums}
+              value={!showAllAlbums}
               onValueChange={(value) => {
-                dispatch(setShowAllAlbums(value));
+                dispatch(setShowAllAlbums(!value));
               }}
             />
           </View>
