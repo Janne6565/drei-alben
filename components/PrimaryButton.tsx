@@ -14,7 +14,7 @@ export function PrimaryButton({
       style={({ pressed }) => [
         {
           opacity: pressed ? 0.6 : 1,
-          backgroundColor: "#2563eb",
+          backgroundColor: "rgba(82, 180, 230, 1)",
           paddingVertical: 12,
           paddingHorizontal: 16,
           borderRadius: 8,

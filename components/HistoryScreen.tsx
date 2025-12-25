@@ -6,74 +6,98 @@ import {
 } from "@/features/sessionData/sessionData.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { AlbumDto } from "@/types/albums";
+import { assertUserConfirmation } from "@/util/assert-user-confirmation";
+import { formatDate } from "@/util/format-date";
+import Feather from "@expo/vector-icons/Feather";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
-import { useRef, useState } from "react";
-import {
-  Button,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useMemo, useRef, useState } from "react";
+import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import * as Progress from "react-native-progress";
+import AlbumDetailsModalContents from "./AlbumDetailsModalContents";
+import Picker from "./Picker";
 import { PrimaryButton } from "./PrimaryButton";
+import BottomModal from "./ui/bottom-modal";
+
+type HistorySortMode = "listenedDate" | "releaseDate";
 
 export const HistoryScreen = () => {
   const dispatch = useAppDispatch();
   const { seenAlbums } = useAppSelector((state) => state.sessionData.data);
   const { data: albums } = useAppSelector((state) => state.albums);
   const [selectedAlbum, setSelectedAlbum] = useState<AlbumDto | null>(null);
+  const [sortMode, setSortMode] = useState<HistorySortMode>("listenedDate");
 
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const clearAllModalRef = useRef<BottomSheetModal>(null);
+  const albumDetailsModalRef = useRef<BottomSheetModal>(null);
+  const sortPickerModalsRef = useRef<BottomSheetModal>(null);
 
-  const seenAlbumsData = albums.filter((album) => seenAlbums[album.id]);
+  const seenAlbumsData = useMemo(() => {
+    const filtered = albums.filter((album) => seenAlbums[album.id]);
+
+    return filtered.sort((a, b) => {
+      if (sortMode === "releaseDate") {
+        return Date.parse(b.release_date) - Date.parse(a.release_date);
+      }
+
+      // default: listened date
+      return seenAlbums[b.id] - seenAlbums[a.id];
+    });
+  }, [albums, seenAlbums, sortMode]);
 
   const openModal = (album: AlbumDto) => {
-    setSelectedAlbum(album);
-    bottomSheetRef.current?.present();
-  };
-
-  const closeModal = () => {
-    bottomSheetRef.current?.close();
-    setSelectedAlbum(null);
-  };
-
-  const confirmDismissal = () => {
-    if (selectedAlbum) {
-      dispatch(dismissAlbum(selectedAlbum.id));
-    }
-    closeModal();
+    assertUserConfirmation({
+      title: "Bestätigen",
+      message: `Möchtest du "${album.name}" wirklich aus deiner Historie entfernen?`,
+      onConfirm: () => dispatch(dismissAlbum(album.id)),
+      confirmationText: "Entfernen",
+    });
   };
 
   const openClearAllModal = () => {
-    clearAllModalRef.current?.present();
+    assertUserConfirmation({
+      title: "Bestätigen",
+      message:
+        "Bist du dir sicher, dass du deine gesamte Historie zurücksetzen willst?",
+      onConfirm: () => dispatch(clearSeenAlbums()),
+      confirmationText: "Zurücksetzen",
+    });
   };
 
-  const closeClearAllModal = () => {
-    clearAllModalRef.current?.close();
-  };
-
-  const confirmClearAll = () => {
-    dispatch(clearSeenAlbums());
-    closeClearAllModal();
+  const openDetailsModal = (album: AlbumDto) => {
+    setSelectedAlbum(album);
+    albumDetailsModalRef.current?.present();
   };
 
   const renderItem = ({ item }: { item: AlbumDto }) => (
-    <View style={styles.itemContainer}>
-      <Image source={{ uri: item.images[0].url }} style={styles.albumArt} />
-      <View style={styles.albumInfo}>
-        <ThemedText style={styles.artistName}>
-          Die drei Fragezeichen:
-        </ThemedText>
-        <ThemedText style={styles.albumTitle} numberOfLines={1}>
-          {item.name}
-        </ThemedText>
+    <Pressable onPress={() => openDetailsModal(item)} key={item.id}>
+      <View style={styles.itemContainer}>
+        <Image source={{ uri: item.images[0].url }} style={styles.albumArt} />
+        <View style={styles.albumInfo}>
+          <ThemedText style={styles.artistName}>
+            Die drei Fragezeichen:
+          </ThemedText>
+          <ThemedText style={styles.albumTitle} numberOfLines={1}>
+            {item.name}
+          </ThemedText>
+          <ThemedText style={styles.albumReleaseDate} numberOfLines={1}>
+            Erschienen am: {formatDate(Date.parse(item.release_date))}
+          </ThemedText>
+          <ThemedText style={styles.albumReleaseDate} numberOfLines={1}>
+            Gehört am: {formatDate(seenAlbums[item.id])}
+          </ThemedText>
+        </View>
+        <TouchableOpacity
+          onPress={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openModal(item);
+          }}
+        >
+          <ThemedText style={styles.removeButtonText}>Entfernen</ThemedText>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={() => openModal(item)}>
-        <ThemedText style={styles.removeButtonText}>Entfernen</ThemedText>
-      </TouchableOpacity>
-    </View>
+    </Pressable>
   );
 
   return (
@@ -81,60 +105,60 @@ export const HistoryScreen = () => {
       <ThemedText style={styles.title}>Historie</ThemedText>
       {seenAlbumsData.length > 0 ? (
         <>
-          <FlatList
-            data={seenAlbumsData}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-          />
-          <View style={styles.clearButtonContainer}>
-            <PrimaryButton label="Zurücksetzen" onPress={openClearAllModal} />
+          <View style={{ paddingBottom: 5, gap: 3 }}>
+            <ThemedText style={{ alignSelf: "center" }}>
+              Gehörte Alben: {seenAlbumsData.length} / {albums.length}
+            </ThemedText>
+            <Progress.Bar
+              width={300}
+              color={"rgba(82, 180, 230, 1)"}
+              style={{ alignSelf: "center" }}
+              progress={seenAlbumsData.length / albums.length}
+            />
           </View>
+
+          <Pressable
+            style={{ padding: 8, opacity: 0.7 }}
+            onPress={() => sortPickerModalsRef.current?.present()}
+          >
+            <ThemedText style={{ alignSelf: "center" }}>
+              Sortiert nach:{" "}
+              {sortMode === "releaseDate" ? "Erschienen am" : "Gehört am"}{" "}
+              <Feather name="external-link" size={16} color="white" />
+            </ThemedText>
+          </Pressable>
+          <ScrollView>
+            <View style={styles.clearButtonContainer}>
+              <PrimaryButton label="Zurücksetzen" onPress={openClearAllModal} />
+            </View>
+            {seenAlbumsData.map((album) => renderItem({ item: album }))}
+          </ScrollView>
         </>
       ) : (
         <View style={styles.centeredView}>
-          <ThemedText>No seen albums yet.</ThemedText>
+          <ThemedText>Keine gehörten Alben</ThemedText>
         </View>
       )}
-      <BottomSheetModal
-        ref={bottomSheetRef}
-        backgroundStyle={{ backgroundColor: "#121212" }}
-        handleIndicatorStyle={{ backgroundColor: "#444", width: 40 }}
-      >
-        <BottomSheetView style={styles.modalContent}>
-          {selectedAlbum && (
-            <>
-              <ThemedText style={styles.modalText}>
-                Möchtest du &quot;{selectedAlbum.name}&quot; wirklich aus deiner
-                Historie entfernen?
-              </ThemedText>
-              <View style={styles.modalButtonContainer}>
-                <Button title="Abbrechen" onPress={closeModal} />
-                <Button
-                  title="Bestätigen"
-                  onPress={confirmDismissal}
-                  color="red"
-                />
-              </View>
-            </>
-          )}
+
+      <BottomModal ref={albumDetailsModalRef} height={"60%"}>
+        <BottomSheetView style={{ overflow: "visible" }}>
+          {selectedAlbum && <AlbumDetailsModalContents album={selectedAlbum} />}
         </BottomSheetView>
-      </BottomSheetModal>
-      <BottomSheetModal
-        ref={clearAllModalRef}
-        backgroundStyle={{ backgroundColor: "#121212" }}
-        handleIndicatorStyle={{ backgroundColor: "#444", width: 40 }}
-        onDismiss={closeClearAllModal}
-      >
-        <BottomSheetView style={styles.modalContent}>
-          <ThemedText style={styles.modalText}>
-            Bist du dir sicher, dass du deine gesamte Historie löschen willst?
-          </ThemedText>
-          <View style={styles.modalButtonContainer}>
-            <Button title="Cancel" onPress={closeClearAllModal} />
-            <Button title="Confirm" onPress={confirmClearAll} color="red" />
+      </BottomModal>
+      <BottomModal ref={sortPickerModalsRef} height={"30%"}>
+        <BottomSheetView>
+          <View style={styles.sortContainer}>
+            <Picker
+              value={sortMode}
+              setValue={setSortMode}
+              options={[
+                { label: "Gehört am", value: "listenedDate" },
+                { label: "Veröffentlicht am", value: "releaseDate" },
+              ]}
+            />
           </View>
         </BottomSheetView>
-      </BottomSheetModal>
+      </BottomModal>
     </ThemedView>
   );
 };
@@ -163,8 +187,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ccc",
   },
   albumArt: {
-    width: 50,
-    height: 50,
+    width: 70,
+    height: 70,
     borderRadius: 4,
   },
   albumInfo: {
@@ -179,9 +203,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  albumReleaseDate: {
+    fontSize: 14,
+    color: "gray",
+  },
   removeButtonText: {
     color: "red",
     marginLeft: 12,
+  },
+  sortContainer: {
+    marginHorizontal: 16,
   },
   modalContent: {
     padding: 22,

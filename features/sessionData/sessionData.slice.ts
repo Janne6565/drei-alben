@@ -22,7 +22,7 @@ const sessionData = createSlice({
       state.data.currentAlbumId = albumId.payload;
     },
     setCurrentAlbumToSeen(state) {
-      state.data.seenAlbums[state.data.currentAlbumId] = true;
+      state.data.seenAlbums[state.data.currentAlbumId] = Date.now();
     },
     dismissAlbum(state, albumId: PayloadAction<string>) {
       delete state.data.seenAlbums[albumId.payload];

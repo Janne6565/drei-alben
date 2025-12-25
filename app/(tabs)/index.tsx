@@ -3,11 +3,12 @@ import { View } from "react-native";
 import AlreadySeenButton from "@/components/AlbumButtons/AlreadySeenButton";
 import OpenAlbumButton from "@/components/AlbumButtons/OpenAlbumButton";
 import RefreshAlbumButton from "@/components/AlbumButtons/RefreshAlbumButton";
+import AlbumDetailsModalContents from "@/components/AlbumDetailsModalContents";
 import AlbumDisplay from "@/components/AlbumDisplay/AlbumDisplay";
 import { MusicProviderList } from "@/components/AlbumDisplay/MusicOpenModal/MusicOpenModal";
 import GenericPage from "@/components/generic-page";
-import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import BottomModal from "@/components/ui/bottom-modal";
 import { fetchAlbums } from "@/features/albums/albums.thunks";
 import useSessionData from "@/features/sessionData/sessionData.hooks";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -72,22 +73,14 @@ export default function AlbumsScreen() {
           <RefreshAlbumButton />
         </View>
       </GenericPage>
-      <BottomSheetModal
-        ref={providersModalRef}
-        backgroundStyle={{ backgroundColor: "#121212" }}
-        handleIndicatorStyle={{ backgroundColor: "#444", width: 40 }}
-      >
+      <BottomModal ref={providersModalRef} height={"25%"}>
         {currentAlbum && <MusicProviderList album={currentAlbum} />}
-      </BottomSheetModal>
-      <BottomSheetModal
-        ref={descriptionModalRef}
-        backgroundStyle={{ backgroundColor: "#121212" }}
-        handleIndicatorStyle={{ backgroundColor: "#444", width: 40 }}
-      >
-        <BottomSheetView style={{ padding: 15, paddingTop: 3 }}>
-          <ThemedText>{currentAlbum?.description}</ThemedText>
+      </BottomModal>
+      <BottomModal ref={descriptionModalRef} height={"60%"}>
+        <BottomSheetView style={{ overflow: "visible" }}>
+          {currentAlbum && <AlbumDetailsModalContents album={currentAlbum} />}
         </BottomSheetView>
-      </BottomSheetModal>
+      </BottomModal>
     </>
   );
 }
