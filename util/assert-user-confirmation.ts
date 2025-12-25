@@ -6,6 +6,7 @@ type ConfirmationOptions = {
   onConfirm: () => void;
   onCancel?: () => void;
   confirmationText: string;
+  isNonDestructive?: boolean;
 };
 
 export const assertUserConfirmation = ({
@@ -14,6 +15,7 @@ export const assertUserConfirmation = ({
   onConfirm,
   onCancel,
   confirmationText,
+  isNonDestructive,
 }: ConfirmationOptions) => {
   Alert.alert(
     title,
@@ -27,7 +29,7 @@ export const assertUserConfirmation = ({
       {
         text: confirmationText ? confirmationText : "Entfernen",
         onPress: onConfirm,
-        style: "destructive",
+        style: isNonDestructive ? "default" : "destructive",
       },
     ],
     { cancelable: false }

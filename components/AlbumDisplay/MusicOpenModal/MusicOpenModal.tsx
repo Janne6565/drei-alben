@@ -1,12 +1,11 @@
 import { ThemedText } from "@/components/themed-text";
 import { AlbumDto } from "@/types/albums";
 import { openLink } from "@/util/music-provider-utils";
+import { Fontisto } from "@expo/vector-icons";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import Fontisto from "@expo/vector-icons/Fontisto";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-
-import { Pressable, View } from "react-native";
+import { Platform as DevicePlatform, Pressable, View } from "react-native";
 
 const appendIfExistsOtherwiseSearch = (
   album: AlbumDto,
@@ -24,7 +23,18 @@ interface Platform {
   calculateLink: (album: AlbumDto) => string;
 }
 
-const platforms: Platform[] = [
+export const MUSIC_PLATFORMS: Platform[] = [
+  DevicePlatform.OS === "ios" && {
+    label: "Apple Music",
+    calculateLink: (album: AlbumDto) =>
+      appendIfExistsOtherwiseSearch(
+        album,
+        "apple_music_id",
+        "https://music.apple.com/de/album/",
+        "https://music.apple.com/de/search?term="
+      ),
+    icon: <Fontisto name="applemusic" size={24} color="white" />,
+  },
   {
     label: "Spotify",
     calculateLink: (album: AlbumDto) =>
@@ -37,17 +47,6 @@ const platforms: Platform[] = [
     icon: <Entypo name="spotify" size={24} color="white" />,
   },
   {
-    label: "Apple Music",
-    calculateLink: (album: AlbumDto) =>
-      appendIfExistsOtherwiseSearch(
-        album,
-        "apple_music_id",
-        "https://music.apple.com/de/album/",
-        "https://music.apple.com/de/search?term="
-      ),
-    icon: <Fontisto name="applemusic" size={24} color="white" />,
-  },
-  {
     label: "Deezer",
     calculateLink: (album: AlbumDto) =>
       appendIfExistsOtherwiseSearch(
@@ -58,12 +57,12 @@ const platforms: Platform[] = [
       ),
     icon: <FontAwesome5 name="deezer" size={24} color="white" />,
   },
-];
+].filter((item) => item) as Platform[];
 
 export const MusicProviderList = (props: { album: AlbumDto }) => {
   return (
     <BottomSheetFlatList
-      data={platforms}
+      data={MUSIC_PLATFORMS}
       keyExtractor={(item: Platform) => item.label}
       renderItem={({ item }: { item: Platform }) => (
         <PlatformRow platform={item} album={props.album} />

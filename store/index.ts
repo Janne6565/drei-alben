@@ -5,15 +5,18 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { persistReducer, persistStore } from "redux-persist";
 
+import historySettings from '@/features/historySettings/historySettings.slice';
+
 const rootReducer = combineReducers({
   albums: albumsReducer,
   sessionData: sessionDataReducer,
+  historySettings: historySettings,
 });
 
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  whitelist: ["albums", "sessionData"],
+  whitelist: ["albums", "sessionData", "historySettings"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

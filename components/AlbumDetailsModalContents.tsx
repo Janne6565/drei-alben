@@ -1,6 +1,8 @@
 import { AlbumDto } from "@/types/albums";
 import { formatDate } from "@/util/format-date";
-import { View } from "react-native";
+import { openLink } from "@/util/music-provider-utils";
+import { TouchableOpacity, View } from "react-native";
+import { MUSIC_PLATFORMS } from "./AlbumDisplay/MusicOpenModal/MusicOpenModal";
 import { ThemedText } from "./themed-text";
 
 const AlbumDetailsModalContents = ({ album }: { album: AlbumDto }) => {
@@ -35,6 +37,23 @@ const AlbumDetailsModalContents = ({ album }: { album: AlbumDto }) => {
       <ThemedText style={{ fontSize: 15, opacity: 0.7 }}>
         {album.description}
       </ThemedText>
+      <ThemedText style={{ fontSize: 15, opacity: 0.5 }}>Links:</ThemedText>
+      {MUSIC_PLATFORMS.map((platform) => (
+        <TouchableOpacity
+          key={platform.label}
+          onPress={() => openLink(platform.calculateLink(album))}
+        >
+          <ThemedText
+            style={{
+              fontSize: 15,
+              opacity: 0.7,
+              textDecorationLine: "underline",
+            }}
+          >
+            {platform.label}
+          </ThemedText>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 };

@@ -38,9 +38,6 @@ const BottomModal = (
       index={0}
       backdropComponent={renderBackdrop}
       enablePanDownToClose
-      style={{
-        background: "red",
-      }}
       enableDismissOnClose
       {...props}
     >
