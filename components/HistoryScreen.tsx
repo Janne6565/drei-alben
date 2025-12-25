@@ -12,7 +12,13 @@ import Feather from "@expo/vector-icons/Feather";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
 import { useMemo, useRef, useState } from "react";
-import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Switch,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import * as Progress from "react-native-progress";
 import AlbumDetailsModalContents from "./AlbumDetailsModalContents";
@@ -28,12 +34,15 @@ export const HistoryScreen = () => {
   const { data: albums } = useAppSelector((state) => state.albums);
   const [selectedAlbum, setSelectedAlbum] = useState<AlbumDto | null>(null);
   const [sortMode, setSortMode] = useState<HistorySortMode>("listenedDate");
+  const [showAllAlbums, setShowAllAlbums] = useState(false);
 
   const albumDetailsModalRef = useRef<BottomSheetModal>(null);
   const sortPickerModalsRef = useRef<BottomSheetModal>(null);
 
   const seenAlbumsData = useMemo(() => {
-    const filtered = albums.filter((album) => seenAlbums[album.id]);
+    const filtered = showAllAlbums
+      ? albums
+      : albums.filter((album) => seenAlbums[album.id]);
 
     return filtered.sort((a, b) => {
       if (sortMode === "releaseDate") {
@@ -41,9 +50,12 @@ export const HistoryScreen = () => {
       }
 
       // default: listened date
-      return seenAlbums[b.id] - seenAlbums[a.id];
+      const aDate = seenAlbums[a.id] || 0;
+      const bDate = seenAlbums[b.id] || 0;
+
+      return bDate - aDate;
     });
-  }, [albums, seenAlbums, sortMode]);
+  }, [albums, seenAlbums, sortMode, showAllAlbums]);
 
   const openModal = (album: AlbumDto) => {
     assertUserConfirmation({
@@ -69,67 +81,98 @@ export const HistoryScreen = () => {
     albumDetailsModalRef.current?.present();
   };
 
-  const renderItem = ({ item }: { item: AlbumDto }) => (
-    <Pressable onPress={() => openDetailsModal(item)} key={item.id}>
-      <View style={styles.itemContainer}>
-        <Image source={{ uri: item.images[0].url }} style={styles.albumArt} />
-        <View style={styles.albumInfo}>
-          <ThemedText style={styles.artistName}>
-            Die drei Fragezeichen:
-          </ThemedText>
-          <ThemedText style={styles.albumTitle} numberOfLines={1}>
-            {item.name}
-          </ThemedText>
-          <ThemedText style={styles.albumReleaseDate} numberOfLines={1}>
-            Erschienen am: {formatDate(Date.parse(item.release_date))}
-          </ThemedText>
-          <ThemedText style={styles.albumReleaseDate} numberOfLines={1}>
-            Gehört am: {formatDate(seenAlbums[item.id])}
-          </ThemedText>
+  const renderItem = ({ item }: { item: AlbumDto }) => {
+    const hasBeenSeen = seenAlbums[item.id];
+
+    return (
+      <Pressable onPress={() => openDetailsModal(item)} key={item.id}>
+        <View style={[styles.itemContainer, !hasBeenSeen && { opacity: 0.5 }]}>
+          <Image source={{ uri: item.images[0].url }} style={styles.albumArt} />
+          <View style={styles.albumInfo}>
+            <ThemedText style={styles.artistName}>
+              Die drei Fragezeichen:
+            </ThemedText>
+            <ThemedText style={styles.albumTitle} numberOfLines={1}>
+              {item.name}
+            </ThemedText>
+            <ThemedText style={styles.albumReleaseDate} numberOfLines={1}>
+              Erschienen am: {formatDate(Date.parse(item.release_date))}
+            </ThemedText>
+            {hasBeenSeen && (
+              <ThemedText style={styles.albumReleaseDate} numberOfLines={1}>
+                Gehört am: {formatDate(seenAlbums[item.id])}
+              </ThemedText>
+            )}
+          </View>
+          {hasBeenSeen && (
+            <TouchableOpacity
+              onPress={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openModal(item);
+              }}
+            >
+              <ThemedText style={styles.removeButtonText}>Entfernen</ThemedText>
+            </TouchableOpacity>
+          )}
         </View>
-        <TouchableOpacity
-          onPress={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            openModal(item);
-          }}
-        >
-          <ThemedText style={styles.removeButtonText}>Entfernen</ThemedText>
-        </TouchableOpacity>
-      </View>
-    </Pressable>
-  );
+      </Pressable>
+    );
+  };
 
   return (
     <ThemedView style={styles.container}>
       <ThemedText style={styles.title}>Historie</ThemedText>
-      {seenAlbumsData.length > 0 ? (
+      {albums.length > 0 ? (
         <>
           <View style={{ paddingBottom: 5, gap: 3 }}>
             <ThemedText style={{ alignSelf: "center" }}>
-              Gehörte Alben: {seenAlbumsData.length} / {albums.length}
+              Gehörte Alben:{" "}
+              {seenAlbumsData.filter((album) => !!seenAlbums[album.id]).length}{" "}
+              / {albums.length}
             </ThemedText>
             <Progress.Bar
               width={300}
               color={"rgba(82, 180, 230, 1)"}
               style={{ alignSelf: "center" }}
-              progress={seenAlbumsData.length / albums.length}
+              progress={
+                seenAlbumsData.filter((album) => !!seenAlbums[album.id])
+                  .length / albums.length
+              }
             />
           </View>
 
-          <Pressable
-            style={{ padding: 8, opacity: 0.7 }}
-            onPress={() => sortPickerModalsRef.current?.present()}
-          >
-            <ThemedText style={{ alignSelf: "center" }}>
-              Sortiert nach:{" "}
-              {sortMode === "releaseDate" ? "Erschienen am" : "Gehört am"}{" "}
-              <Feather name="external-link" size={16} color="white" />
-            </ThemedText>
-          </Pressable>
           <ScrollView>
+            <Pressable
+              style={{ padding: 8, opacity: 0.7 }}
+              onPress={() => sortPickerModalsRef.current?.present()}
+            >
+              <ThemedText style={{ alignSelf: "center" }}>
+                Sortiert nach:{" "}
+                {sortMode === "releaseDate" ? "Erschienen am" : "Gehört am"}{" "}
+                <Feather name="external-link" size={16} color="white" />
+              </ThemedText>
+            </Pressable>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 8,
+                gap: 10,
+              }}
+            >
+              <ThemedText>Alle anzeigen</ThemedText>
+              <Switch
+                value={showAllAlbums}
+                onValueChange={() => setShowAllAlbums(!showAllAlbums)}
+              />
+            </View>
             <View style={styles.clearButtonContainer}>
-              <PrimaryButton label="Zurücksetzen" onPress={openClearAllModal} />
+              <PrimaryButton
+                label="Gehörte Alben zurücksetzen"
+                onPress={openClearAllModal}
+              />
             </View>
             {seenAlbumsData.map((album) => renderItem({ item: album }))}
           </ScrollView>
