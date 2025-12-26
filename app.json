@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "drei-alben",
-    "slug": "drei-alben",
+    "name": "Bobs Archiv",
+    "slug": "bobs-archiv",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.janne6565.dreialben",
+      "bundleIdentifier": "com.janne6565.bobs-archiv",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -23,7 +23,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.janne6565.bobsarchiv"
     },
     "web": {
       "output": "static",
