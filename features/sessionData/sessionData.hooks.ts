@@ -12,6 +12,9 @@ const useSessionData = () => {
 
   const pickNewAlbum = useCallback(() => {
     const filteredAlbums = albums.filter((album) => {
+      if (!album.name.toLowerCase().includes("super")) {
+        return false;
+      }
       if (currentAlbumId === album.id) {
         return false;
       }
