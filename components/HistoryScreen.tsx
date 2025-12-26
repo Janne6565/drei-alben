@@ -116,7 +116,8 @@ export const HistoryScreen = () => {
               {
                 flexDirection: "row",
                 alignItems: "center",
-                width: "70%",
+                maxWidth: "70%",
+                flex: 1,
               },
               !hasBeenSeen && { opacity: 0.5 },
             ]}
