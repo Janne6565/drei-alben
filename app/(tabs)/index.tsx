@@ -52,7 +52,14 @@ export default function AlbumsScreen() {
 
   return (
     <>
-      <GenericPage style={{ paddingTop: 90, flex: 1, height: "100%" }}>
+      <GenericPage
+        style={{
+          paddingTop: 90,
+          flex: 1,
+          height: "100%",
+          justifyContent: "space-evenly",
+        }}
+      >
         <ThemedView>
           {currentAlbum && (
             <AlbumDisplay
