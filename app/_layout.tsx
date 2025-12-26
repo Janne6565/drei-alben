@@ -1,13 +1,8 @@
 import { persistor, store } from "@/store";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import React from "react";
-import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
 import { Provider } from "react-redux";
@@ -18,17 +13,13 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <PaperProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <BottomSheetModalProvider>
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-              <ThemeProvider
-                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-              >
+              <ThemeProvider value={DarkTheme}>
                 <Stack>
                   <Stack.Screen
                     name="(tabs)"

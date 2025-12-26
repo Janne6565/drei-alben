@@ -5,6 +5,7 @@ import {
   dismissAlbum,
   setAlbumToSeen,
 } from "@/features/sessionData/sessionData.slice";
+import { useThemeColor } from "@/hooks/use-theme-color";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { AlbumDto } from "@/types/albums";
 import { assertUserConfirmation } from "@/util/assert-user-confirmation";
@@ -33,6 +34,7 @@ export const HistoryScreen = () => {
   const albumDetailsModalRef = useRef<BottomSheetModal>(null);
   const optionsModalRef = useRef<BottomSheetModal>(null);
   const openAlbumModalRef = useRef<BottomSheetModal>(null);
+  const textColor = useThemeColor({}, "text");
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -49,11 +51,11 @@ export const HistoryScreen = () => {
             aspectRatio: "auto",
           }}
         >
-          <Feather name="settings" size={24} color="white" />
+          <Feather name="settings" size={24} color={textColor} />
         </IconButton>
       ),
     });
-  }, [navigation]);
+  }, [navigation, textColor]);
 
   const seenAlbumsData = useMemo(() => {
     const filtered = showAllAlbums
@@ -96,6 +98,12 @@ export const HistoryScreen = () => {
     setSelectedAlbum(album);
     albumDetailsModalRef.current?.present();
   };
+
+  const textColorPrimary = useThemeColor(
+    { dark: "rgba(120, 120, 200, 1)" },
+    "text"
+  );
+  const textColorSecondary = useThemeColor({ dark: "lightblue" }, "text");
 
   const renderItem = ({ item }: { item: AlbumDto }) => {
     const hasBeenSeen = seenAlbums[item.id];
@@ -158,7 +166,9 @@ export const HistoryScreen = () => {
                   setSelectedAlbum(item);
                 }}
               >
-                <ThemedText style={{ color: "lightblue" }}>Anhören</ThemedText>
+                <ThemedText style={{ color: textColorSecondary }}>
+                  Anhören
+                </ThemedText>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
@@ -174,7 +184,7 @@ export const HistoryScreen = () => {
               >
                 <ThemedText
                   style={{
-                    color: "rgba(120, 120, 200, 1)",
+                    color: textColorPrimary,
                     alignSelf: "flex-end",
                   }}
                 >
