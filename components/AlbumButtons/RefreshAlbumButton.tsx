@@ -1,14 +1,14 @@
 import useSessionData from "@/features/sessionData/sessionData.hooks";
 import Feather from "@expo/vector-icons/Feather";
-import IconButton from "../IconButton";
+import AlbumButton from "./AlbumButton";
 
 const RefreshAlbumButton = () => {
   const { pickNewAlbum } = useSessionData();
 
   return (
-    <IconButton onPress={pickNewAlbum}>
+    <AlbumButton onPress={pickNewAlbum} label={"Neue Folge"}>
       <Feather name="refresh-ccw" size={24} color="white" />
-    </IconButton>
+    </AlbumButton>
   );
 };
 

@@ -2,7 +2,7 @@ import useSessionData from "@/features/sessionData/sessionData.hooks";
 import { setCurrentAlbumToSeen } from "@/features/sessionData/sessionData.slice";
 import { useAppDispatch } from "@/store/hooks";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import IconButton from "../IconButton";
+import AlbumButton from "./AlbumButton";
 
 const AlreadySeenButton = () => {
   const dispatch = useAppDispatch();
@@ -13,9 +13,9 @@ const AlreadySeenButton = () => {
   };
 
   return (
-    <IconButton onPress={clickHandler}>
+    <AlbumButton onPress={clickHandler} label={"Bereits gehört"}>
       <Ionicons name="checkmark-done" size={24} color="white" />
-    </IconButton>
+    </AlbumButton>
   );
 };
 

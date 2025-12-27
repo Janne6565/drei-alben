@@ -14,8 +14,10 @@ import useSessionData from "@/features/sessionData/sessionData.hooks";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function AlbumsScreen() {
+  const inset = useSafeAreaInsets();
   const providersModalRef = useRef<BottomSheetModal>(null);
   const descriptionModalRef = useRef<BottomSheetModal>(null);
 
@@ -54,7 +56,7 @@ export default function AlbumsScreen() {
     <>
       <GenericPage
         style={{
-          paddingTop: 90,
+          paddingTop: inset.top,
           flex: 1,
           height: "100%",
           justifyContent: "space-evenly",
@@ -62,10 +64,7 @@ export default function AlbumsScreen() {
       >
         <ThemedView>
           {currentAlbum && (
-            <AlbumDisplay
-              album={currentAlbum}
-              onDescriptionClick={openDescriptionModal}
-            />
+            <AlbumDisplay album={currentAlbum} onPress={openDescriptionModal} />
           )}
         </ThemedView>
         <View

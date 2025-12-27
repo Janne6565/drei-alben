@@ -1,5 +1,5 @@
 import Entypo from "@expo/vector-icons/Entypo";
-import IconButton from "../IconButton";
+import AlbumButton from "./AlbumButton";
 
 const OpenAlbumButton = (props: { onPress?: () => void }) => {
   const clickHandler = () => {
@@ -10,9 +10,9 @@ const OpenAlbumButton = (props: { onPress?: () => void }) => {
   };
 
   return (
-    <IconButton onPress={clickHandler}>
+    <AlbumButton onPress={clickHandler} label={"Öffnen"}>
       <Entypo name="controller-play" size={55} color="white" />
-    </IconButton>
+    </AlbumButton>
   );
 };
 

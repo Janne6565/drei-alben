@@ -10,18 +10,17 @@ import { AlbumDto } from "@/types/albums";
 import { assertUserConfirmation } from "@/util/assert-user-confirmation";
 import Feather from "@expo/vector-icons/Feather";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useNavigation } from "expo-router";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import * as Progress from "react-native-progress";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { HistoryModals } from "./HistoryModals";
-import IconButton from "./IconButton";
 import { HistoryScreenAlbumColumn } from "./HistoryScreenAlbumColumn";
 
 export const HistoryScreen = () => {
   const dispatch = useAppDispatch();
-  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const { seenAlbums } = useAppSelector((state) => state.sessionData.data);
   const { data: albums } = useAppSelector((state) => state.albums);
   const { sortMode, showAllAlbums } = useAppSelector(
@@ -32,28 +31,6 @@ export const HistoryScreen = () => {
   const albumDetailsModalRef = useRef<BottomSheetModal>(null);
   const optionsModalRef = useRef<BottomSheetModal>(null);
   const openAlbumModalRef = useRef<BottomSheetModal>(null);
-  const textColor = useThemeColor({}, "text");
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <IconButton
-          onPress={() => optionsModalRef.current?.present()}
-          style={{
-            marginRight: 15,
-            backgroundColor: "transparent",
-            borderColor: "transparent",
-            borderWidth: 0,
-            padding: 0,
-            borderRadius: 0,
-            aspectRatio: "auto",
-          }}
-        >
-          <Feather name="settings" size={24} color={textColor} />
-        </IconButton>
-      ),
-    });
-  }, [navigation, textColor]);
 
   const seenAlbumsData = useMemo(() => {
     const filtered = showAllAlbums
@@ -104,7 +81,7 @@ export const HistoryScreen = () => {
   const textColorSecondary = useThemeColor({ dark: "lightblue" }, "text");
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
       <TouchableOpacity
         onPress={() => optionsModalRef.current?.present()}
         style={styles.settingsButton}
@@ -172,13 +149,13 @@ export const HistoryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 60,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
-    marginVertical: 16,
+    marginBottom: 16,
+    marginTop: 5,
   },
   centeredView: {
     flex: 1,
