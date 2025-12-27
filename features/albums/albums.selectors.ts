@@ -44,3 +44,25 @@ export const selectFilteredAlbums = createSelector(
     return sorted;
   }
 );
+
+export const selectCharacterCounts = createSelector(
+  [selectFilteredAlbums],
+  (filteredAlbums) => {
+    const characterCounts: Record<string, number> = {};
+
+    for (const album of filteredAlbums) {
+      if (album.narrators) {
+        const uniqueCharacters = new Set(
+          album.narrators.map((narr) => narr.character)
+        );
+        for (const character of uniqueCharacters) {
+          if (character) {
+            characterCounts[character] = (characterCounts[character] || 0) + 1;
+          }
+        }
+      }
+    }
+
+    return characterCounts;
+  }
+);

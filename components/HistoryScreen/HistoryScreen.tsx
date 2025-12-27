@@ -33,9 +33,8 @@ export const HistoryScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const { seenAlbums } = useAppSelector((state) => state.sessionData.data);
   const { data: albums } = useAppSelector((state) => state.albums);
-  const { showAllAlbums } = useAppSelector(
-    (state) => state.historySettings
-  );
+  const { sortMode, showAllAlbums, sortDirection, filteredCharacters } =
+    useAppSelector((state) => state.historySettings);
   const [selectedAlbum, setSelectedAlbum] = useState<AlbumDto | null>(null);
 
   const albumDetailsModalRef = useRef<BottomSheetModal>(null);
@@ -101,13 +100,13 @@ export const HistoryScreen = () => {
       </View>
 
       <ThemedText style={styles.title}>Historie</ThemedText>
-      {albums.length > 0 ? (
+      {seenAlbumsData.length > 0 ? (
         <>
           <View style={{ paddingBottom: 5, gap: 3 }}>
             <ThemedText style={{ alignSelf: "center" }}>
               Gehörte Alben:{" "}
               {seenAlbumsData.filter((album) => !!seenAlbums[album.id]).length}{" "}
-              / {albums.length}
+              / {seenAlbumsData.length}
             </ThemedText>
             <Progress.Bar
               width={300}
@@ -115,7 +114,7 @@ export const HistoryScreen = () => {
               style={{ alignSelf: "center" }}
               progress={
                 seenAlbumsData.filter((album) => !!seenAlbums[album.id])
-                  .length / albums.length
+                  .length / seenAlbumsData.length
               }
             />
           </View>
@@ -155,7 +154,6 @@ export const HistoryScreen = () => {
         albumDetailsModalRef={albumDetailsModalRef}
         optionsModalRef={optionsModalRef}
         selectedAlbum={selectedAlbum}
-        showAllAlbums={showAllAlbums}
         openClearAllModal={openClearAllModal}
       />
     </ThemedView>

@@ -1,11 +1,11 @@
 import {
   setFilteredCharacters,
-  setShowAllAlbums,
   setSortDirection,
   setSortMode,
+  toggleShowAllAlbums,
 } from "@/features/historySettings/historySettings.slice";
 import { HistorySortMode } from "@/features/historySettings/historySettings.types";
-import { useFilteredAlbums } from "@/hooks/use-filtered-albums";
+import { useCharacterCounts } from "@/hooks/use-character-counts";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { AlbumDto } from "@/types/albums";
 import { shortenString } from "@/util/string-utils";
@@ -29,7 +29,6 @@ type HistoryModalsProps = {
   openAlbumModalRef: React.RefObject<BottomSheetModal | null>;
   filterModalRef: React.RefObject<BottomSheetModal | null>;
   selectedAlbum: AlbumDto | null;
-  showAllAlbums: boolean;
   openClearAllModal: () => void;
 };
 
@@ -39,9 +38,9 @@ export function HistoryModals({
   openAlbumModalRef,
   filterModalRef,
   selectedAlbum,
-  showAllAlbums,
   openClearAllModal,
 }: HistoryModalsProps) {
+  const { showAllAlbums } = useAppSelector((state) => state.historySettings);
   const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const { sortDirection, sortMode } = useAppSelector(
@@ -51,10 +50,15 @@ export function HistoryModals({
     (state) => state.historySettings
   );
   const narratorsClean = useAppSelector((state) => state.narrators.data);
-  const filteredAlbums = useFilteredAlbums();
+  const characterCounts = useCharacterCounts();
   const narrators = useMemo(
-    () => [...narratorsClean].sort((a, b) => (b.count ?? 0) - (a.count ?? 0)),
-    [narratorsClean]
+    () =>
+      [...narratorsClean].sort(
+        (a, b) =>
+          (characterCounts[b.character] ?? 0) -
+          (characterCounts[a.character] ?? 0)
+      ),
+    [characterCounts, narratorsClean]
   );
   const handleClick = useCallback(
     (value: HistorySortMode) => {
@@ -132,8 +136,8 @@ export function HistoryModals({
             <ThemedText>Nur gehörte Alben anzeigen</ThemedText>
             <Switch
               value={!showAllAlbums}
-              onValueChange={(value) => {
-                dispatch(setShowAllAlbums(!value));
+              onValueChange={() => {
+                dispatch(toggleShowAllAlbums());
               }}
             />
           </View>
@@ -149,26 +153,12 @@ export function HistoryModals({
             </ThemedText>
             <MultiValueSelect
               options={narrators
-                .filter(
-                  (narr) =>
-                    filteredAlbums.filter((album) =>
-                      album.narrators?.some(
-                        (n) => n.character === narr.character
-                      )
-                    ).length > 0
-                )
+                .filter((narr) => characterCounts[narr.character] > 0)
                 .map((narr) => {
                   const narrLabel = shortenString(narr.character, 15);
                   return {
                     label:
-                      narrLabel +
-                      " (" +
-                      filteredAlbums.filter((album) =>
-                        album.narrators?.some(
-                          (narrr) => narrr.character === narr.character
-                        )
-                      ).length +
-                      ")",
+                      narrLabel + " (" + characterCounts[narr.character] + ")",
                     value: narr,
                   };
                 })}
@@ -177,7 +167,10 @@ export function HistoryModals({
               )}
               onChange={setFilteredCharactersInternal}
               keyExtractor={(item) => item.character}
-              label={narrators.length + " Personen..."}
+              label={
+                Object.values(characterCounts).filter((val) => val > 0).length +
+                " Personen..."
+              }
             />
           </View>
         </BottomSheetView>
