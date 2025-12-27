@@ -33,7 +33,7 @@ export default function AlbumsScreen() {
 
   const { currentAlbumId } = useAppSelector((state) => state.sessionData.data);
   const currentAlbum = useMemo(
-    () => albums.find((album) => album.id === currentAlbumId),
+    () => albums?.find((album) => album.id === currentAlbumId),
     [albums, currentAlbumId]
   );
 

@@ -1,5 +1,7 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { setAlbums } from "@/features/albums/albums.slice";
+import { fetchAlbums } from "@/features/albums/albums.utils";
 import {
   clearSeenAlbums,
   dismissAlbum,
@@ -11,7 +13,12 @@ import { assertUserConfirmation } from "@/util/assert-user-confirmation";
 import Feather from "@expo/vector-icons/Feather";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useMemo, useRef, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  RefreshControl,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import * as Progress from "react-native-progress";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,6 +28,7 @@ import { HistoryScreenAlbumColumn } from "./HistoryScreenAlbumColumn";
 export const HistoryScreen = () => {
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
+  const [refreshing, setRefreshing] = useState(false);
   const { seenAlbums } = useAppSelector((state) => state.sessionData.data);
   const { data: albums } = useAppSelector((state) => state.albums);
   const { sortMode, showAllAlbums, sortDirection } = useAppSelector(
@@ -76,6 +84,13 @@ export const HistoryScreen = () => {
     });
   };
 
+  const refreshAlbums = async () => {
+    setRefreshing(true);
+    const albums = await fetchAlbums();
+    dispatch(setAlbums(albums));
+    setRefreshing(false);
+  };
+
   const openDetailsModal = (album: AlbumDto) => {
     setSelectedAlbum(album);
     albumDetailsModalRef.current?.present();
@@ -126,6 +141,12 @@ export const HistoryScreen = () => {
 
           <FlatList
             data={seenAlbumsData}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={refreshAlbums}
+              />
+            }
             renderItem={({ item }) => (
               <HistoryScreenAlbumColumn
                 item={item}

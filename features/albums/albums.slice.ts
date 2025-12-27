@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { AlbumDto } from "@/types/albums";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchAlbums } from "./albums.thunks";
 import { AlbumsState } from "./albums.types";
 
@@ -13,6 +14,10 @@ const albumsSlice = createSlice({
   reducers: {
     clearAlbums(state) {
       state.data = [];
+      state.status = "idle";
+    },
+    setAlbums(state, payload: PayloadAction<AlbumDto[]>) {
+      state.data = payload.payload;
       state.status = "idle";
     },
   },
@@ -33,5 +38,5 @@ const albumsSlice = createSlice({
   },
 });
 
-export const { clearAlbums } = albumsSlice.actions;
+export const { clearAlbums, setAlbums } = albumsSlice.actions;
 export default albumsSlice.reducer;
