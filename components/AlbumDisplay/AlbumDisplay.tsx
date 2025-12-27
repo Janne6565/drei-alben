@@ -15,7 +15,8 @@ const AlbumDisplay = ({
   album: AlbumDto;
   onPress: () => void;
 }) => {
-  const lines = Dimensions.get("window").height < 700 ? 2 : 4;
+  const height = Dimensions.get("window").height;
+  const lines = height < 700 ? 2 : height < 800 ? 4 : height < 900 ? 5 : 6;
   const reservedHeight = lines * DESCRIPTION_LINE_HEIGHT;
   return (
     <TouchableOpacity
@@ -48,6 +49,7 @@ const AlbumDisplay = ({
           >
             {!album.name.toLowerCase().startsWith("die drei ???") &&
               "Die drei Fragezeichen: "}
+            {Dimensions.get("window").height}
           </ThemedText>
           <ThemedText
             style={{
