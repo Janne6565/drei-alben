@@ -1,14 +1,15 @@
-import { default as albumsReducer } from "@/features/albums/albums.slice";
-import { default as sessionDataReducer } from "@/features/sessionData/sessionData.slice";
+import albumsReducer from "@/features/albums/albums.slice";
+import historySettings from "@/features/historySettings/historySettings.slice";
+import narratorReducer from "@/features/narrators/narrators.slice";
+import sessionDataReducer from "@/features/sessionData/sessionData.slice";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { persistReducer, persistStore } from "redux-persist";
 
-import historySettings from '@/features/historySettings/historySettings.slice';
-
 const rootReducer = combineReducers({
   albums: albumsReducer,
+  narrators: narratorReducer,
   sessionData: sessionDataReducer,
   historySettings: historySettings,
 });
@@ -16,7 +17,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  whitelist: ["albums", "sessionData", "historySettings"],
+  whitelist: ["albums", "narrators", "sessionData", "historySettings"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

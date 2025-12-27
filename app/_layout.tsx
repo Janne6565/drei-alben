@@ -1,4 +1,5 @@
 import { fetchAlbums } from "@/features/albums/albums.thunks";
+import { fetchNarrators } from "@/features/narrators/narrators.thunks";
 import { persistor, store } from "@/store";
 import { useAppDispatch } from "@/store/hooks";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -19,6 +20,7 @@ const StartupLogic = () => {
 
   useEffect(() => {
     dispatch(fetchAlbums());
+    dispatch(fetchNarrators());
   }, [dispatch]);
 
   return null;

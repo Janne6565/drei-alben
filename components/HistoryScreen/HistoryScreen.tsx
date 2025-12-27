@@ -2,17 +2,19 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { setAlbums } from "@/features/albums/albums.slice";
 import { fetchAlbums } from "@/features/albums/albums.utils";
+import { setNarrators } from "@/features/narrators/narrators.slice";
 import {
   clearSeenAlbums,
   dismissAlbum,
 } from "@/features/sessionData/sessionData.slice";
+import { useFilteredAlbums } from "@/hooks/use-filtered-albums";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { AlbumDto } from "@/types/albums";
 import { assertUserConfirmation } from "@/util/assert-user-confirmation";
 import Feather from "@expo/vector-icons/Feather";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   RefreshControl,
   StyleSheet,
@@ -31,7 +33,7 @@ export const HistoryScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const { seenAlbums } = useAppSelector((state) => state.sessionData.data);
   const { data: albums } = useAppSelector((state) => state.albums);
-  const { sortMode, showAllAlbums, sortDirection } = useAppSelector(
+  const { showAllAlbums } = useAppSelector(
     (state) => state.historySettings
   );
   const [selectedAlbum, setSelectedAlbum] = useState<AlbumDto | null>(null);
@@ -41,29 +43,7 @@ export const HistoryScreen = () => {
   const filterModalRef = useRef<BottomSheetModal>(null);
   const openAlbumModalRef = useRef<BottomSheetModal>(null);
 
-  const seenAlbumsData = useMemo(() => {
-    const filtered = showAllAlbums
-      ? [...albums]
-      : albums.filter((album) => seenAlbums[album.id]);
-
-    const sorted = filtered.sort((a, b) => {
-      if (sortMode === "releaseDate") {
-        return Date.parse(b.release_date) - Date.parse(a.release_date);
-      }
-
-      // default: listened date
-      const aDate = seenAlbums[a.id] || 0;
-      const bDate = seenAlbums[b.id] || 0;
-
-      return bDate - aDate;
-    });
-
-    if (sortDirection === "asc") {
-      return sorted.reverse();
-    }
-
-    return sorted;
-  }, [showAllAlbums, albums, sortDirection, seenAlbums, sortMode]);
+  const seenAlbumsData = useFilteredAlbums();
 
   const openModal = (album: AlbumDto) => {
     assertUserConfirmation({
@@ -86,8 +66,9 @@ export const HistoryScreen = () => {
 
   const refreshAlbums = async () => {
     setRefreshing(true);
-    const albums = await fetchAlbums();
+    const { albums, narrators } = await fetchAlbums();
     dispatch(setAlbums(albums));
+    dispatch(setNarrators(narrators));
     setRefreshing(false);
   };
 
@@ -203,6 +184,6 @@ const styles = StyleSheet.create({
     right: 16,
     zIndex: 10,
     flexDirection: "row",
-    gap: 10,
+    gap: 15,
   },
 });

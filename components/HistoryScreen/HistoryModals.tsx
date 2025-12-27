@@ -1,13 +1,16 @@
 import {
+  setFilteredCharacters,
   setShowAllAlbums,
   setSortDirection,
   setSortMode,
 } from "@/features/historySettings/historySettings.slice";
 import { HistorySortMode } from "@/features/historySettings/historySettings.types";
+import { useFilteredAlbums } from "@/hooks/use-filtered-albums";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { AlbumDto } from "@/types/albums";
+import { shortenString } from "@/util/string-utils";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { StyleSheet, Switch, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AlbumDetailsModalContents from "../AlbumDisplay/AlbumDetailsModalContents";
@@ -16,6 +19,9 @@ import { OptionRow } from "../OptionRow";
 import { PrimaryButton } from "../PrimaryButton";
 import { ThemedText } from "../themed-text";
 import BottomModal from "../ui/bottom-modal";
+import { MultiValueSelect } from "../ui/multi-value-select";
+
+type OnChangeType = (value: string[] | ((prev: string[]) => string[])) => void;
 
 type HistoryModalsProps = {
   albumDetailsModalRef: React.RefObject<BottomSheetModal | null>;
@@ -41,6 +47,15 @@ export function HistoryModals({
   const { sortDirection, sortMode } = useAppSelector(
     (state) => state.historySettings
   );
+  const { filteredCharacters } = useAppSelector(
+    (state) => state.historySettings
+  );
+  const narratorsClean = useAppSelector((state) => state.narrators.data);
+  const filteredAlbums = useFilteredAlbums();
+  const narrators = useMemo(
+    () => [...narratorsClean].sort((a, b) => (b.count ?? 0) - (a.count ?? 0)),
+    [narratorsClean]
+  );
   const handleClick = useCallback(
     (value: HistorySortMode) => {
       if (sortMode === value) {
@@ -51,6 +66,14 @@ export function HistoryModals({
     },
     [dispatch, sortDirection, sortMode]
   );
+
+  const setFilteredCharactersInternal: OnChangeType = (newVal) => {
+    dispatch(
+      setFilteredCharacters(
+        typeof newVal === "function" ? newVal(filteredCharacters) : newVal
+      )
+    );
+  };
 
   return (
     <>
@@ -79,6 +102,25 @@ export function HistoryModals({
               direction={sortDirection}
             />
           </View>
+
+          <PrimaryButton
+            label="Gehörte Alben zurücksetzen"
+            onPress={() => {
+              openClearAllModal();
+              optionsModalRef.current?.dismiss();
+            }}
+          />
+        </BottomSheetView>
+      </BottomModal>
+      <BottomModal ref={openAlbumModalRef} height={"25%"} asChild>
+        {selectedAlbum && <MusicProviderList album={selectedAlbum} />}
+      </BottomModal>
+
+      <BottomModal ref={filterModalRef} height={"50%"} asChild>
+        <BottomSheetView
+          style={[styles.optionsContainer, { paddingBottom: insets.bottom }]}
+        >
+          <ThemedText style={styles.modalTitle}>Filter</ThemedText>
           <View
             style={{
               flexDirection: "row",
@@ -95,21 +137,50 @@ export function HistoryModals({
               }}
             />
           </View>
-          <PrimaryButton
-            label="Gehörte Alben zurücksetzen"
-            onPress={() => {
-              openClearAllModal();
-              optionsModalRef.current?.dismiss();
+          <View
+            style={{
+              flexDirection: "column",
+              gap: 14,
+              justifyContent: "space-between",
             }}
-          />
+          >
+            <ThemedText style={{ opacity: 0.7 }}>
+              Alben filtern durch Personen
+            </ThemedText>
+            <MultiValueSelect
+              options={narrators
+                .filter(
+                  (narr) =>
+                    filteredAlbums.filter((album) =>
+                      album.narrators?.some(
+                        (n) => n.character === narr.character
+                      )
+                    ).length > 0
+                )
+                .map((narr) => {
+                  const narrLabel = shortenString(narr.character, 15);
+                  return {
+                    label:
+                      narrLabel +
+                      " (" +
+                      filteredAlbums.filter((album) =>
+                        album.narrators?.some(
+                          (narrr) => narrr.character === narr.character
+                        )
+                      ).length +
+                      ")",
+                    value: narr,
+                  };
+                })}
+              value={Object.fromEntries(
+                filteredCharacters?.map((opt) => [opt, true]) ?? []
+              )}
+              onChange={setFilteredCharactersInternal}
+              keyExtractor={(item) => item.character}
+              label={narrators.length + " Personen..."}
+            />
+          </View>
         </BottomSheetView>
-      </BottomModal>
-      <BottomModal ref={openAlbumModalRef} height={"25%"} asChild>
-        {selectedAlbum && <MusicProviderList album={selectedAlbum} />}
-      </BottomModal>
-
-      <BottomModal ref={filterModalRef} height={"20%"}>
-        <ThemedText>Fortnite</ThemedText>
       </BottomModal>
     </>
   );

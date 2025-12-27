@@ -9,6 +9,12 @@ export type ImageDto = {
   height: number;
 };
 
+export type Narrator = {
+  artist: string;
+  character: string;
+  count?: number;
+};
+
 export type AlbumDto = {
   id: string;
   images: ImageDto[];
@@ -31,4 +37,5 @@ export type AlbumDto = {
   is_hidden: boolean;
   narrator: string;
   weblink: string;
+  narrators?: Narrator[];
 };

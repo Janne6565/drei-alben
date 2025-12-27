@@ -8,7 +8,8 @@ export const fetchAlbums = createAsyncThunk<
   { rejectValue: string }
 >("albums/fetch", async (_, { rejectWithValue }) => {
   try {
-    return await fetchAlbumsApi();
+    const { albums } = await fetchAlbumsApi();
+    return albums;
   } catch {
     return rejectWithValue("Could not load albums");
   }
