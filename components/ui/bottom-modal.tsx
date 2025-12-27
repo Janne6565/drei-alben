@@ -3,16 +3,20 @@ import {
   BottomSheetBackdropProps,
   BottomSheetModal,
   BottomSheetModalProps,
+  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import React, { ReactNode, Ref, useCallback, useMemo } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const BottomModal = (
   props: {
     ref: Ref<BottomSheetModal>;
     children: ReactNode;
     height: string;
+    asChild?: boolean;
   } & BottomSheetModalProps
 ) => {
+  const insets = useSafeAreaInsets();
   const snapPoints = useMemo(() => [props.height], [props.height]);
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -41,7 +45,13 @@ const BottomModal = (
       enableDismissOnClose
       {...props}
     >
-      {props.children}
+      {props.asChild ? (
+        props.children
+      ) : (
+        <BottomSheetView style={{ paddingBottom: insets.bottom }}>
+          {props.children}
+        </BottomSheetView>
+      )}
     </BottomSheetModal>
   );
 };

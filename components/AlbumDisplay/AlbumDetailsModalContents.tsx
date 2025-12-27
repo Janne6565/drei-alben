@@ -1,7 +1,7 @@
 import { AlbumDto } from "@/types/albums";
 import { formatDate } from "@/util/format-date";
 import { openLink } from "@/util/music-provider-utils";
-import { TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../themed-text";
 import { MUSIC_PLATFORMS } from "./MusicOpenModal/MusicOpenModal";
 
@@ -16,46 +16,57 @@ const AlbumDetailsModalContents = ({ album }: { album: AlbumDto }) => {
       </ThemedText>
       {album.number && (
         <>
-          <ThemedText style={{ fontSize: 15, opacity: 0.5 }}>
-            Nummer:
-          </ThemedText>
-          <ThemedText style={{ fontSize: 15, opacity: 0.7 }}>
-            {album.number}
-          </ThemedText>
+          <ThemedText style={styles.headings}>Nummer:</ThemedText>
+          <ThemedText style={styles.values}>{album.number}</ThemedText>
         </>
       )}
 
-      <ThemedText style={{ fontSize: 15, opacity: 0.5 }}>
-        Erschienen am:
-      </ThemedText>
-      <ThemedText style={{ fontSize: 15, opacity: 0.7 }}>
+      <ThemedText style={styles.headings}>Erschienen am:</ThemedText>
+      <ThemedText style={styles.values}>
         {formatDate(Date.parse(album.release_date))}
       </ThemedText>
-      <ThemedText style={{ fontSize: 15, opacity: 0.5 }}>
-        Beschreibung:
-      </ThemedText>
-      <ThemedText style={{ fontSize: 15, opacity: 0.7 }}>
-        {album.description}
-      </ThemedText>
-      <ThemedText style={{ fontSize: 15, opacity: 0.5 }}>Links:</ThemedText>
+      <ThemedText style={styles.headings}>Beschreibung:</ThemedText>
+      <ThemedText style={styles.values}>{album.description}</ThemedText>
+      <ThemedText style={styles.headings}>Links:</ThemedText>
       {MUSIC_PLATFORMS.map((platform) => (
         <TouchableOpacity
           key={platform.label}
-          onPress={() => openLink(platform.calculateLink(album))}
+          onPress={() =>
+            openLink(platform.calculateLink(album)(platform.albumKey))
+          }
         >
-          <ThemedText
-            style={{
-              fontSize: 15,
-              opacity: 0.7,
-              textDecorationLine: "underline",
-            }}
-          >
-            {platform.label}
-          </ThemedText>
+          <View style={{ flexDirection: "row", opacity: 0.7 }}>
+            <ThemedText
+              style={{
+                fontSize: 15,
+                textDecorationLine: "underline",
+              }}
+            >
+              {platform.label}
+            </ThemedText>
+            {!album[platform.albumKey] && (
+              <ThemedText style={{ opacity: 0.6, fontSize: 15 }}>
+                {" "}
+                (Nicht vollständig Unterstützt)
+              </ThemedText>
+            )}
+          </View>
         </TouchableOpacity>
       ))}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  headings: {
+    paddingTop: 5,
+    fontSize: 15,
+    opacity: 0.5,
+  },
+  values: {
+    fontSize: 15,
+    opacity: 0.7,
+  },
+});
 
 export default AlbumDetailsModalContents;

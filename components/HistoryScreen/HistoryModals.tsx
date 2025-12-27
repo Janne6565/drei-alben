@@ -9,6 +9,7 @@ import { AlbumDto } from "@/types/albums";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback } from "react";
 import { StyleSheet, Switch, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AlbumDetailsModalContents from "../AlbumDisplay/AlbumDetailsModalContents";
 import { MusicProviderList } from "../AlbumDisplay/MusicOpenModal/MusicOpenModal";
 import { OptionRow } from "../OptionRow";
@@ -33,6 +34,7 @@ export function HistoryModals({
   showAllAlbums,
   openClearAllModal,
 }: HistoryModalsProps) {
+  const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const { sortDirection, sortMode } = useAppSelector(
     (state) => state.historySettings
@@ -51,13 +53,13 @@ export function HistoryModals({
   return (
     <>
       <BottomModal ref={albumDetailsModalRef} height={"50%"}>
-        <BottomSheetView style={{ overflow: "visible" }}>
-          {selectedAlbum && <AlbumDetailsModalContents album={selectedAlbum} />}
-        </BottomSheetView>
+        {selectedAlbum && <AlbumDetailsModalContents album={selectedAlbum} />}
       </BottomModal>
 
-      <BottomModal ref={optionsModalRef} height={"60%"}>
-        <BottomSheetView style={styles.optionsContainer}>
+      <BottomModal ref={optionsModalRef} height={"60%"} asChild>
+        <BottomSheetView
+          style={[styles.optionsContainer, { paddingBottom: insets.bottom }]}
+        >
           <ThemedText style={styles.modalTitle}>Einstellungen</ThemedText>
           <View>
             <ThemedText>Sortieren nach</ThemedText>
@@ -100,7 +102,7 @@ export function HistoryModals({
           />
         </BottomSheetView>
       </BottomModal>
-      <BottomModal ref={openAlbumModalRef} height={"40%"}>
+      <BottomModal ref={openAlbumModalRef} height={"25%"} asChild>
         {selectedAlbum && <MusicProviderList album={selectedAlbum} />}
       </BottomModal>
     </>

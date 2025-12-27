@@ -11,7 +11,7 @@ import { ThemedView } from "@/components/themed-view";
 import BottomModal from "@/components/ui/bottom-modal";
 import useSessionData from "@/features/sessionData/sessionData.hooks";
 import { useAppSelector } from "@/store/hooks";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -70,13 +70,11 @@ export default function AlbumsScreen() {
           <RefreshAlbumButton />
         </View>
       </GenericPage>
-      <BottomModal ref={providersModalRef} height={"25%"}>
+      <BottomModal ref={providersModalRef} height={"25%"} asChild>
         {currentAlbum && <MusicProviderList album={currentAlbum} />}
       </BottomModal>
       <BottomModal ref={descriptionModalRef} height={"60%"}>
-        <BottomSheetView style={{ overflow: "visible" }}>
-          {currentAlbum && <AlbumDetailsModalContents album={currentAlbum} />}
-        </BottomSheetView>
+        {currentAlbum && <AlbumDetailsModalContents album={currentAlbum} />}
       </BottomModal>
     </>
   );
