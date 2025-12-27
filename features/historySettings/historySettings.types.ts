@@ -1,6 +1,8 @@
 export type HistorySortMode = "listenedDate" | "releaseDate";
+export type SortDirection = "asc" | "desc";
 
 export interface HistorySettings {
-    sortMode: HistorySortMode;
-    showAllAlbums: boolean;
+  sortMode: HistorySortMode;
+  sortDirection: SortDirection;
+  showAllAlbums: boolean;
 }

@@ -5,6 +5,9 @@ import { Dimensions, TouchableOpacity } from "react-native";
 import { ThemedText } from "../themed-text";
 import { ThemedView } from "../themed-view";
 
+const DESCRIPTION_FONT_SIZE = 16;
+const DESCRIPTION_LINE_HEIGHT = 22;
+
 const AlbumDisplay = ({
   album,
   onPress,
@@ -12,6 +15,8 @@ const AlbumDisplay = ({
   album: AlbumDto;
   onPress: () => void;
 }) => {
+  const lines = Dimensions.get("window").height < 700 ? 2 : 4;
+  const reservedHeight = lines * DESCRIPTION_LINE_HEIGHT;
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -50,6 +55,7 @@ const AlbumDisplay = ({
               fontSize: 25,
               textAlign: "center",
             }}
+            numberOfLines={1}
           >
             {toUppercase(album.name)}
           </ThemedText>
@@ -58,13 +64,14 @@ const AlbumDisplay = ({
               width: "80%",
               alignSelf: "center",
               textAlign: "center",
-              overflowY: "hidden",
-              textOverflow: "ellpise",
               color: "rgba(255, 255, 255, 0.7)",
+              fontSize: DESCRIPTION_FONT_SIZE,
+              lineHeight: DESCRIPTION_LINE_HEIGHT,
+              minHeight: reservedHeight,
             }}
-            numberOfLines={Dimensions.get("window").height < 700 ? 3 : 4}
+            numberOfLines={lines}
           >
-            {album.description}
+            {album.description || " "}
           </ThemedText>
         </ThemedView>
       </ThemedView>

@@ -1,20 +1,16 @@
-import * as Haptics from "expo-haptics";
 import { ReactNode } from "react";
-import { Pressable, ViewStyle } from "react-native";
+import { Pressable, StyleProp, ViewStyle } from "react-native";
 
 const IconButton = (props: {
   children: ReactNode;
-  onPress: () => void;
-  style?: ViewStyle;
+  onPress?: () => void;
+  style?: StyleProp<ViewStyle>;
   label?: string;
 }) => {
   return (
     <Pressable
       onPress={() => {
-        if (process.env.EXPO_OS === "ios") {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-        }
-        props.onPress();
+        props.onPress && props.onPress();
       }}
       style={[
         {
@@ -28,6 +24,7 @@ const IconButton = (props: {
         },
         props.style,
       ]}
+      disabled={!props.onPress}
     >
       {props.children}
     </Pressable>

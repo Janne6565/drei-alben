@@ -8,7 +8,7 @@ import { AlbumDto } from "@/types/albums";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { StyleSheet, Switch, View } from "react-native";
-import AlbumDetailsModalContents from "../AlbumDetailsModalContents";
+import AlbumDetailsModalContents from "../AlbumDisplay/AlbumDetailsModalContents";
 import { MusicProviderList } from "../AlbumDisplay/MusicOpenModal/MusicOpenModal";
 import { OptionRow } from "../OptionRow";
 import { PrimaryButton } from "../PrimaryButton";

@@ -2,8 +2,8 @@ import { AlbumDto } from "@/types/albums";
 import { formatDate } from "@/util/format-date";
 import { openLink } from "@/util/music-provider-utils";
 import { TouchableOpacity, View } from "react-native";
-import { MUSIC_PLATFORMS } from "./AlbumDisplay/MusicOpenModal/MusicOpenModal";
-import { ThemedText } from "./themed-text";
+import { ThemedText } from "../themed-text";
+import { MUSIC_PLATFORMS } from "./MusicOpenModal/MusicOpenModal";
 
 const AlbumDetailsModalContents = ({ album }: { album: AlbumDto }) => {
   return (

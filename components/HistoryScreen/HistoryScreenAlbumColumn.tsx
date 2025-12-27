@@ -7,7 +7,10 @@ import { formatDate } from "@/util/format-date";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
 import { RefObject } from "react";
-import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import AlbumUnseeButton from "../AlbumButtons/AlbumUnseeButton";
+import AlreadySeenButton from "../AlbumButtons/AlreadySeenButton";
+import OpenAlbumButton from "../AlbumButtons/OpenAlbumButton";
 
 interface HistoryScreenAlbumColumnProps {
   item: AlbumDto;
@@ -65,35 +68,24 @@ export const HistoryScreenAlbumColumn = ({
             )}
           </View>
         </View>
-        {hasBeenSeen ? (
-          <TouchableOpacity
-            onPress={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              openModal(item);
-            }}
-          >
-            <ThemedText style={styles.removeButtonText}>Entfernen</ThemedText>
-          </TouchableOpacity>
-        ) : (
-          <View
-            style={{
-              paddingLeft: 4,
-              justifyContent: "flex-end",
-            }}
-          >
-            <TouchableOpacity
-              style={{ alignSelf: "flex-end" }}
-              onPress={(e) => {
-                openAlbumModalRef.current?.present();
-                setSelectedAlbum(item);
+        <View
+          style={{
+            paddingLeft: 4,
+            justifyContent: "flex-end",
+            flexDirection: "row",
+            gap: 10,
+            opacity: hasBeenSeen ? 1 : 0.7,
+          }}
+        >
+          {hasBeenSeen ? (
+            <AlbumUnseeButton
+              onPress={() => {
+                openModal(item);
               }}
-            >
-              <ThemedText style={{ color: textColorSecondary }}>
-                Anhören
-              </ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity
+              size={"M"}
+            />
+          ) : (
+            <AlreadySeenButton
               onPress={() => {
                 assertUserConfirmation({
                   title: "Album als gehört markieren",
@@ -103,18 +95,18 @@ export const HistoryScreenAlbumColumn = ({
                   confirmationText: "Als gehört markieren",
                 });
               }}
-            >
-              <ThemedText
-                style={{
-                  color: textColorPrimary,
-                  alignSelf: "flex-end",
-                }}
-              >
-                Bereits Angehört
-              </ThemedText>
-            </TouchableOpacity>
-          </View>
-        )}
+              size={"M"}
+              label={"Gehört"}
+            />
+          )}
+          <OpenAlbumButton
+            onPress={() => {
+              openAlbumModalRef.current?.present();
+              setSelectedAlbum(item);
+            }}
+            size={"M"}
+          />
+        </View>
       </View>
     </Pressable>
   );

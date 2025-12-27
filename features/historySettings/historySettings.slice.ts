@@ -1,8 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { HistorySettings, HistorySortMode } from "./historySettings.types";
+import {
+  HistorySettings,
+  HistorySortMode,
+  SortDirection,
+} from "./historySettings.types";
 
 const initialState: HistorySettings = {
   sortMode: "releaseDate",
+  sortDirection: "desc",
   showAllAlbums: true,
 };
 
@@ -12,6 +17,9 @@ const historySettingsSlice = createSlice({
   reducers: {
     setSortMode: (state, action: PayloadAction<HistorySortMode>) => {
       state.sortMode = action.payload;
+    },
+    setSortDirection: (state, action: PayloadAction<SortDirection>) => {
+      state.sortDirection = action.payload;
     },
     setShowAllAlbums: (state, action: PayloadAction<boolean>) => {
       state.showAllAlbums = action.payload;

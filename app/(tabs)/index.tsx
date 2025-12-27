@@ -3,7 +3,7 @@ import { View } from "react-native";
 import AlreadySeenButton from "@/components/AlbumButtons/AlreadySeenButton";
 import OpenAlbumButton from "@/components/AlbumButtons/OpenAlbumButton";
 import RefreshAlbumButton from "@/components/AlbumButtons/RefreshAlbumButton";
-import AlbumDetailsModalContents from "@/components/AlbumDetailsModalContents";
+import AlbumDetailsModalContents from "@/components/AlbumDisplay/AlbumDetailsModalContents";
 import AlbumDisplay from "@/components/AlbumDisplay/AlbumDisplay";
 import { MusicProviderList } from "@/components/AlbumDisplay/MusicOpenModal/MusicOpenModal";
 import GenericPage from "@/components/generic-page";
