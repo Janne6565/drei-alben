@@ -9,9 +9,8 @@ import { MusicProviderList } from "@/components/AlbumDisplay/MusicOpenModal/Musi
 import GenericPage from "@/components/generic-page";
 import { ThemedView } from "@/components/themed-view";
 import BottomModal from "@/components/ui/bottom-modal";
-import { fetchAlbums } from "@/features/albums/albums.thunks";
 import useSessionData from "@/features/sessionData/sessionData.hooks";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppSelector } from "@/store/hooks";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -29,9 +28,7 @@ export default function AlbumsScreen() {
     descriptionModalRef.current?.present();
   }, []);
 
-  const dispatch = useAppDispatch();
-
-  const { data: albums, status } = useAppSelector((state) => state.albums);
+  const { data: albums } = useAppSelector((state) => state.albums);
   const { pickNewAlbum } = useSessionData();
 
   const { currentAlbumId } = useAppSelector((state) => state.sessionData.data);
@@ -39,12 +36,6 @@ export default function AlbumsScreen() {
     () => albums.find((album) => album.id === currentAlbumId),
     [albums, currentAlbumId]
   );
-
-  useEffect(() => {
-    if (status === "idle" && albums.length === 0) {
-      dispatch(fetchAlbums());
-    }
-  }, [status, albums.length, dispatch]);
 
   useEffect(() => {
     if (currentAlbumId === "") {

@@ -1,8 +1,9 @@
-import { persistor, store } from "@/store";
+import { fetchAlbums } from "@/features/albums/albums.thunks";
+import { persistor, store, useAppDispatch } from "@/store";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
 import { Provider } from "react-redux";
@@ -12,6 +13,16 @@ export const unstable_settings = {
   anchor: "(tabs)",
 };
 
+const StartupLogic = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchAlbums());
+  }, [dispatch]);
+
+  return null;
+};
+
 export default function RootLayout() {
   return (
     <PaperProvider>
@@ -19,6 +30,7 @@ export default function RootLayout() {
         <BottomSheetModalProvider>
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
+              <StartupLogic />
               <ThemeProvider value={DarkTheme}>
                 <Stack>
                   <Stack.Screen
