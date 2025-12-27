@@ -50,7 +50,8 @@ export default function AlbumsScreen() {
           paddingTop: inset.top,
           flex: 1,
           height: "100%",
-          justifyContent: "space-evenly",
+          justifyContent: "center",
+          gap: 25,
         }}
       >
         <ThemedView>

@@ -47,7 +47,7 @@ const AlbumDetailsModalContents = ({ album }: { album: AlbumDto }) => {
             {!album[platform.albumKey] && (
               <ThemedText style={{ opacity: 0.6, fontSize: 15 }}>
                 {" "}
-                (Nicht vollständig Unterstützt)
+                (Nicht vollständig unterstützt)
               </ThemedText>
             )}
           </View>

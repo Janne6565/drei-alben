@@ -104,7 +104,7 @@ const PlatformRow = ({
       {!album[platform.albumKey] && (
         <ThemedText style={{ opacity: 0.6 }}>
           {" "}
-          (Nicht vollständig Unterstützt)
+          (Nicht vollständig unterstützt)
         </ThemedText>
       )}
     </View>
