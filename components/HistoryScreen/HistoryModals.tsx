@@ -21,6 +21,7 @@ type HistoryModalsProps = {
   albumDetailsModalRef: React.RefObject<BottomSheetModal | null>;
   optionsModalRef: React.RefObject<BottomSheetModal | null>;
   openAlbumModalRef: React.RefObject<BottomSheetModal | null>;
+  filterModalRef: React.RefObject<BottomSheetModal | null>;
   selectedAlbum: AlbumDto | null;
   showAllAlbums: boolean;
   openClearAllModal: () => void;
@@ -30,6 +31,7 @@ export function HistoryModals({
   albumDetailsModalRef,
   optionsModalRef,
   openAlbumModalRef,
+  filterModalRef,
   selectedAlbum,
   showAllAlbums,
   openClearAllModal,
@@ -104,6 +106,10 @@ export function HistoryModals({
       </BottomModal>
       <BottomModal ref={openAlbumModalRef} height={"25%"} asChild>
         {selectedAlbum && <MusicProviderList album={selectedAlbum} />}
+      </BottomModal>
+
+      <BottomModal ref={filterModalRef} height={"20%"}>
+        <ThemedText>Fortnite</ThemedText>
       </BottomModal>
     </>
   );

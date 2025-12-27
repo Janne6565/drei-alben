@@ -30,6 +30,7 @@ export const HistoryScreen = () => {
 
   const albumDetailsModalRef = useRef<BottomSheetModal>(null);
   const optionsModalRef = useRef<BottomSheetModal>(null);
+  const filterModalRef = useRef<BottomSheetModal>(null);
   const openAlbumModalRef = useRef<BottomSheetModal>(null);
 
   const seenAlbumsData = useMemo(() => {
@@ -49,7 +50,7 @@ export const HistoryScreen = () => {
       return bDate - aDate;
     });
 
-    if (sortDirection == "asc") {
+    if (sortDirection === "asc") {
       return sorted.reverse();
     }
 
@@ -88,13 +89,20 @@ export const HistoryScreen = () => {
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
-      <TouchableOpacity
-        onPress={() => optionsModalRef.current?.present()}
-        style={styles.settingsButton}
-        hitSlop={10}
-      >
-        <Feather name="settings" size={24} color="white" />
-      </TouchableOpacity>
+      <View style={styles.headerButtons}>
+        <TouchableOpacity
+          onPress={() => filterModalRef.current?.present()}
+          hitSlop={10}
+        >
+          <Feather name="filter" size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => optionsModalRef.current?.present()}
+          hitSlop={10}
+        >
+          <Feather name="settings" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
 
       <ThemedText style={styles.title}>Historie</ThemedText>
       {albums.length > 0 ? (
@@ -141,6 +149,7 @@ export const HistoryScreen = () => {
 
       <HistoryModals
         openAlbumModalRef={openAlbumModalRef}
+        filterModalRef={filterModalRef}
         albumDetailsModalRef={albumDetailsModalRef}
         optionsModalRef={optionsModalRef}
         selectedAlbum={selectedAlbum}
@@ -167,10 +176,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  settingsButton: {
+  headerButtons: {
     position: "absolute",
     top: 55,
     right: 16,
     zIndex: 10,
+    flexDirection: "row",
+    gap: 10,
   },
 });
