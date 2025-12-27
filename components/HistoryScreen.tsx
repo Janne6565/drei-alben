@@ -3,23 +3,21 @@ import { ThemedView } from "@/components/themed-view";
 import {
   clearSeenAlbums,
   dismissAlbum,
-  setAlbumToSeen,
 } from "@/features/sessionData/sessionData.slice";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { AlbumDto } from "@/types/albums";
 import { assertUserConfirmation } from "@/util/assert-user-confirmation";
-import { formatDate } from "@/util/format-date";
 import Feather from "@expo/vector-icons/Feather";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Image } from "expo-image";
 import { useNavigation } from "expo-router";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import * as Progress from "react-native-progress";
 import { HistoryModals } from "./HistoryModals";
 import IconButton from "./IconButton";
+import { HistoryScreenAlbumColumn } from "./HistoryScreenAlbumColumn";
 
 export const HistoryScreen = () => {
   const dispatch = useAppDispatch();
@@ -105,100 +103,6 @@ export const HistoryScreen = () => {
   );
   const textColorSecondary = useThemeColor({ dark: "lightblue" }, "text");
 
-  const renderItem = ({ item }: { item: AlbumDto }) => {
-    const hasBeenSeen = seenAlbums[item.id];
-
-    return (
-      <Pressable onPress={() => openDetailsModal(item)} key={item.id}>
-        <View style={[styles.itemContainer]}>
-          <View
-            style={[
-              {
-                flexDirection: "row",
-                alignItems: "center",
-                maxWidth: "70%",
-                flex: 1,
-              },
-              !hasBeenSeen && { opacity: 0.5 },
-            ]}
-          >
-            <Image
-              source={{ uri: item.images[0].url }}
-              style={styles.albumArt}
-            />
-            <View style={styles.albumInfo}>
-              <ThemedText style={styles.artistName}>
-                Die drei Fragezeichen:
-              </ThemedText>
-              <ThemedText style={styles.albumTitle} numberOfLines={1}>
-                {item.name}
-              </ThemedText>
-              <ThemedText style={styles.albumReleaseDate} numberOfLines={1}>
-                Erschienen am: {formatDate(Date.parse(item.release_date))}
-              </ThemedText>
-              {hasBeenSeen && (
-                <ThemedText style={styles.albumReleaseDate} numberOfLines={1}>
-                  Gehört am: {formatDate(seenAlbums[item.id])}
-                </ThemedText>
-              )}
-            </View>
-          </View>
-          {hasBeenSeen ? (
-            <TouchableOpacity
-              onPress={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                openModal(item);
-              }}
-            >
-              <ThemedText style={styles.removeButtonText}>Entfernen</ThemedText>
-            </TouchableOpacity>
-          ) : (
-            <View
-              style={{
-                paddingLeft: 4,
-                justifyContent: "flex-end",
-              }}
-            >
-              <TouchableOpacity
-                style={{ alignSelf: "flex-end" }}
-                onPress={(e) => {
-                  openAlbumModalRef.current?.present();
-                  setSelectedAlbum(item);
-                }}
-              >
-                <ThemedText style={{ color: textColorSecondary }}>
-                  Anhören
-                </ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  assertUserConfirmation({
-                    title: "Album als gehört markieren",
-                    message:
-                      "Wollen Sie " + item.name + " als gehört markieren?",
-                    isNonDestructive: true,
-                    onConfirm: () => dispatch(setAlbumToSeen(item.id)),
-                    confirmationText: "Als gehört markieren",
-                  });
-                }}
-              >
-                <ThemedText
-                  style={{
-                    color: textColorPrimary,
-                    alignSelf: "flex-end",
-                  }}
-                >
-                  Bereits Angehört
-                </ThemedText>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-      </Pressable>
-    );
-  };
-
   return (
     <ThemedView style={styles.container}>
       <TouchableOpacity
@@ -231,7 +135,18 @@ export const HistoryScreen = () => {
 
           <FlatList
             data={seenAlbumsData}
-            renderItem={renderItem}
+            renderItem={({ item }) => (
+              <HistoryScreenAlbumColumn
+                item={item}
+                seenAlbums={seenAlbums}
+                openDetailsModal={openDetailsModal}
+                openModal={openModal}
+                openAlbumModalRef={openAlbumModalRef}
+                setSelectedAlbum={setSelectedAlbum}
+                textColorPrimary={textColorPrimary}
+                textColorSecondary={textColorSecondary}
+              />
+            )}
             keyExtractor={(alb) => alb.id}
           />
         </>
@@ -270,68 +185,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  itemContainer: {
-    width: "100%",
-    padding: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
   settingsButton: {
     position: "absolute",
     top: 55,
     right: 16,
     zIndex: 10,
-  },
-  albumArt: {
-    width: 70,
-    height: 70,
-    borderRadius: 4,
-  },
-  albumInfo: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  artistName: {
-    color: "gray",
-    fontSize: 14,
-  },
-  albumTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  albumReleaseDate: {
-    fontSize: 14,
-    color: "gray",
-  },
-  removeButtonText: {
-    color: "red",
-    marginLeft: 12,
-    textAlign: "right",
-  },
-  sortContainer: {
-    marginHorizontal: 16,
-  },
-  modalContent: {
-    padding: 22,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 4,
-    borderColor: "rgba(0, 0, 0, 0.1)",
-    backgroundColor: "#121212",
-  },
-  modalText: {
-    marginBottom: 12,
-    textAlign: "center",
-  },
-  modalButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-  },
-  clearButtonContainer: {
-    padding: 16,
   },
 });
