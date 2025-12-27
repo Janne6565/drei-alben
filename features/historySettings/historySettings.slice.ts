@@ -27,6 +27,7 @@ const historySettingsSlice = createSlice({
   },
 });
 
-export const { setSortMode, setShowAllAlbums } = historySettingsSlice.actions;
+export const { setSortMode, setShowAllAlbums, setSortDirection } =
+  historySettingsSlice.actions;
 
 export default historySettingsSlice.reducer;

@@ -1,5 +1,6 @@
 import { fetchAlbums } from "@/features/albums/albums.thunks";
-import { persistor, store, useAppDispatch } from "@/store";
+import { persistor, store } from "@/store";
+import { useAppDispatch } from "@/store/hooks";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";

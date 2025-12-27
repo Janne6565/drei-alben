@@ -6,7 +6,7 @@ const RefreshAlbumButton = () => {
   const { pickNewAlbum } = useSessionData();
 
   return (
-    <AlbumButton onPress={pickNewAlbum} label={"Neue Folge"}>
+    <AlbumButton onPress={pickNewAlbum} label={"Andere Folge"}>
       <Feather name="refresh-ccw" size={24} color="white" />
     </AlbumButton>
   );

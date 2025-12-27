@@ -7,57 +7,61 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { Platform as DevicePlatform, Pressable, View } from "react-native";
 
-const appendIfExistsOtherwiseSearch = (
-  album: AlbumDto,
-  key: keyof AlbumDto,
-  albumDirectLink: string,
-  searchUrLPrefix: string
-) =>
-  album[key]
-    ? albumDirectLink + album[key]
-    : searchUrLPrefix + encodeURIComponent(album.name);
+const appendIfExistsOtherwiseSearch =
+  (album: AlbumDto, albumDirectLink: string, searchUrLPrefix: string) =>
+  (key: keyof AlbumDto) =>
+    album[key]
+      ? albumDirectLink + album[key]
+      : searchUrLPrefix + encodeURIComponent(album.name);
 
 interface Platform {
   label: string;
   icon: React.ReactNode;
-  calculateLink: (album: AlbumDto) => string;
+  albumKey: keyof AlbumDto;
+  calculateLink: (album: AlbumDto) => (key: keyof AlbumDto) => string;
 }
 
-export const MUSIC_PLATFORMS: Platform[] = [
-  DevicePlatform.OS === "ios" && {
-    label: "Apple Music",
-    calculateLink: (album: AlbumDto) =>
-      appendIfExistsOtherwiseSearch(
-        album,
-        "apple_music_id",
-        "https://music.apple.com/de/album/",
-        "https://music.apple.com/de/search?term="
-      ),
-    icon: <Fontisto name="applemusic" size={24} color="white" />,
-  },
+export const MUSIC_PLATFORMS: readonly Platform[] = [
+  ...(DevicePlatform.OS === "ios"
+    ? [
+        {
+          label: "Apple Music",
+          albumKey: "apple_music_id",
+          calculateLink: (album: AlbumDto) =>
+            appendIfExistsOtherwiseSearch(
+              album,
+              "https://music.apple.com/de/album/",
+              "https://music.apple.com/de/search?term="
+            ),
+          icon: <Fontisto name="applemusic" size={24} color="white" />,
+        } satisfies Platform,
+      ]
+    : []),
+
   {
     label: "Spotify",
+    albumKey: "spotify_id",
     calculateLink: (album: AlbumDto) =>
       appendIfExistsOtherwiseSearch(
         album,
-        "spotify_id",
         "https://open.spotify.com/intl-de/album/",
         "https://open.spotify.com/search/"
       ),
     icon: <Entypo name="spotify" size={24} color="white" />,
   },
+
   {
     label: "Deezer",
+    albumKey: "deezer_id",
     calculateLink: (album: AlbumDto) =>
       appendIfExistsOtherwiseSearch(
         album,
-        "deezer_id",
         "https://www.deezer.com/de/album/",
         "https://www.deezer.com/search/"
       ),
     icon: <FontAwesome5 name="deezer" size={24} color="white" />,
   },
-].filter((item) => item) as Platform[];
+];
 
 export const MusicProviderList = (props: { album: AlbumDto }) => {
   return (
@@ -82,7 +86,7 @@ const PlatformRow = ({
   album: AlbumDto;
 }) => (
   <Pressable
-    onPress={() => openLink(platform.calculateLink(album))}
+    onPress={() => openLink(platform.calculateLink(album)(platform.albumKey))}
     style={({ pressed }) => ({
       flexDirection: "row",
       alignItems: "center",
@@ -93,8 +97,16 @@ const PlatformRow = ({
   >
     <View style={{ width: 28, alignItems: "center" }}>{platform.icon}</View>
 
-    <ThemedText style={{ marginLeft: 12, fontSize: 16 }}>
-      {platform.label}
-    </ThemedText>
+    <View style={{ flexDirection: "row" }}>
+      <ThemedText style={{ marginLeft: 12, fontSize: 16 }}>
+        {platform.label}
+      </ThemedText>
+      {!album[platform.albumKey] && (
+        <ThemedText style={{ opacity: 0.6 }}>
+          {" "}
+          (Nicht vollständig Unterstützt)
+        </ThemedText>
+      )}
+    </View>
   </Pressable>
 );

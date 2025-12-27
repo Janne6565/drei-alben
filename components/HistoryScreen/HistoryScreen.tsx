@@ -23,7 +23,7 @@ export const HistoryScreen = () => {
   const insets = useSafeAreaInsets();
   const { seenAlbums } = useAppSelector((state) => state.sessionData.data);
   const { data: albums } = useAppSelector((state) => state.albums);
-  const { sortMode, showAllAlbums } = useAppSelector(
+  const { sortMode, showAllAlbums, sortDirection } = useAppSelector(
     (state) => state.historySettings
   );
   const [selectedAlbum, setSelectedAlbum] = useState<AlbumDto | null>(null);
@@ -37,7 +37,7 @@ export const HistoryScreen = () => {
       ? [...albums]
       : albums.filter((album) => seenAlbums[album.id]);
 
-    return filtered.sort((a, b) => {
+    const sorted = filtered.sort((a, b) => {
       if (sortMode === "releaseDate") {
         return Date.parse(b.release_date) - Date.parse(a.release_date);
       }
@@ -48,7 +48,13 @@ export const HistoryScreen = () => {
 
       return bDate - aDate;
     });
-  }, [albums, seenAlbums, sortMode, showAllAlbums]);
+
+    if (sortDirection == "asc") {
+      return sorted.reverse();
+    }
+
+    return sorted;
+  }, [showAllAlbums, albums, sortDirection, seenAlbums, sortMode]);
 
   const openModal = (album: AlbumDto) => {
     assertUserConfirmation({
@@ -138,7 +144,6 @@ export const HistoryScreen = () => {
         albumDetailsModalRef={albumDetailsModalRef}
         optionsModalRef={optionsModalRef}
         selectedAlbum={selectedAlbum}
-        sortMode={sortMode}
         showAllAlbums={showAllAlbums}
         openClearAllModal={openClearAllModal}
       />

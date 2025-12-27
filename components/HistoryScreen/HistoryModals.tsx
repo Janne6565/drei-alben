@@ -1,12 +1,13 @@
 import {
   setShowAllAlbums,
+  setSortDirection,
   setSortMode,
 } from "@/features/historySettings/historySettings.slice";
 import { HistorySortMode } from "@/features/historySettings/historySettings.types";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { AlbumDto } from "@/types/albums";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import React from "react";
+import React, { useCallback } from "react";
 import { StyleSheet, Switch, View } from "react-native";
 import AlbumDetailsModalContents from "../AlbumDisplay/AlbumDetailsModalContents";
 import { MusicProviderList } from "../AlbumDisplay/MusicOpenModal/MusicOpenModal";
@@ -20,7 +21,6 @@ type HistoryModalsProps = {
   optionsModalRef: React.RefObject<BottomSheetModal | null>;
   openAlbumModalRef: React.RefObject<BottomSheetModal | null>;
   selectedAlbum: AlbumDto | null;
-  sortMode: HistorySortMode;
   showAllAlbums: boolean;
   openClearAllModal: () => void;
 };
@@ -30,11 +30,23 @@ export function HistoryModals({
   optionsModalRef,
   openAlbumModalRef,
   selectedAlbum,
-  sortMode,
   showAllAlbums,
   openClearAllModal,
 }: HistoryModalsProps) {
   const dispatch = useAppDispatch();
+  const { sortDirection, sortMode } = useAppSelector(
+    (state) => state.historySettings
+  );
+  const handleClick = useCallback(
+    (value: HistorySortMode) => {
+      if (sortMode === value) {
+        dispatch(setSortDirection(sortDirection === "asc" ? "desc" : "asc"));
+      } else {
+        dispatch(setSortMode(value));
+      }
+    },
+    [dispatch, sortDirection, sortMode]
+  );
 
   return (
     <>
@@ -52,13 +64,15 @@ export function HistoryModals({
             <OptionRow
               label="Gehört am"
               selected={sortMode === "listenedDate"}
-              onPress={() => dispatch(setSortMode("listenedDate"))}
+              onPress={() => handleClick("listenedDate")}
+              direction={sortDirection}
             />
 
             <OptionRow
               label="Veröffentlicht am"
               selected={sortMode === "releaseDate"}
-              onPress={() => dispatch(setSortMode("releaseDate"))}
+              onPress={() => handleClick("releaseDate")}
+              direction={sortDirection}
             />
           </View>
           <View

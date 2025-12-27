@@ -13,7 +13,7 @@ const OpenAlbumButton = (props: {
   };
 
   return (
-    <AlbumButton onPress={clickHandler} label={"Play"} size={props.size}>
+    <AlbumButton onPress={clickHandler} label={"Öffnen"} size={props.size}>
       <Entypo
         name="controller-play"
         size={props.size === "M" ? 17 : 55}
