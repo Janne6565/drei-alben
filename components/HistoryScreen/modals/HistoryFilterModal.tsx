@@ -2,6 +2,7 @@ import TextInput from "@/components/ui/text-input";
 import {
   setAlbumNameFilter,
   setFilteredCharacters,
+  setFilteredCharactersMode,
   setShowAllAlbums,
 } from "@/features/historySettings/historySettings.slice";
 import { closeHistoryFilterModal } from "@/features/modals/modals.slice";
@@ -16,7 +17,14 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Keyboard, Pressable, StyleSheet, Switch, View } from "react-native";
+import {
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  Switch,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemedText } from "../../themed-text";
 import BottomModal from "../../ui/bottom-modal";
@@ -27,9 +35,12 @@ type OnChangeType = (value: string[] | ((prev: string[]) => string[])) => void;
 export function HistoryFilterModal() {
   const dispatch = useAppDispatch();
   const { isOpen } = useAppSelector((state) => state.modals.historyFilter);
-  const { showAllAlbums, filteredCharacters, albumNameFilter } = useAppSelector(
-    (state) => state.historySettings
-  );
+  const {
+    showAllAlbums,
+    filteredCharacters,
+    albumNameFilter,
+    filteredCharactersMode,
+  } = useAppSelector((state) => state.historySettings);
   const [searchString, setSearchString] = useState("");
   const narratorsClean = useAppSelector((state) => state.narrators.data);
   const characterCounts = useCharacterCounts();
@@ -121,19 +132,25 @@ export function HistoryFilterModal() {
                 Folgen durch Personen filtern
               </ThemedText>
               <MultiValueSelect
-                options={narrators
-                  .filter((narr) => characterCounts[narr.character] > 0)
-                  .map((narr) => {
-                    const narrLabel = shortenString(narr.character, 15);
-                    return {
-                      label:
-                        narrLabel +
-                        " (" +
-                        characterCounts[narr.character] +
-                        ")",
-                      value: narr,
-                    };
-                  })}
+                style={{ paddingRight: 10 }}
+                options={(filteredCharactersMode === "AND"
+                  ? narrators.filter(
+                      (narr) => characterCounts[narr.character] > 0
+                    )
+                  : narrators
+                ).map((narr) => {
+                  const narrLabel = shortenString(narr.character, 15);
+                  return {
+                    label:
+                      narrLabel +
+                      " (" +
+                      (filteredCharactersMode === "AND"
+                        ? characterCounts[narr.character]
+                        : narr.count) +
+                      ")",
+                    value: narr,
+                  };
+                })}
                 value={Object.fromEntries(
                   filteredCharacters?.map((opt) => [opt, true]) ?? []
                 )}
@@ -141,10 +158,33 @@ export function HistoryFilterModal() {
                 onChange={setFilteredCharactersInternal}
                 keyExtractor={(item) => item.character}
                 label={
-                  Object.values(characterCounts).filter((val) => val > 0)
-                    .length + " Personen..."
+                  (filteredCharactersMode === "AND"
+                    ? Object.values(characterCounts).filter((val) => val > 0)
+                        .length
+                    : narratorsClean.length) + " Personen..."
                 }
                 searchStringExtractor={(nar) => nar.character}
+                endDecorrator={
+                  <TouchableOpacity
+                    onPress={() =>
+                      dispatch(
+                        setFilteredCharactersMode(
+                          filteredCharactersMode === "AND" ? "OR" : "AND"
+                        )
+                      )
+                    }
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.3)",
+                      paddingVertical: 5,
+                      paddingHorizontal: 10,
+                      borderRadius: 25,
+                    }}
+                  >
+                    <ThemedText>
+                      {filteredCharactersMode === "AND" ? "UND" : "ODER"}
+                    </ThemedText>
+                  </TouchableOpacity>
+                }
               />
             </View>
           </View>

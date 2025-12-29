@@ -9,6 +9,7 @@ const initialState: HistorySettings = {
   sortMode: "releaseDate",
   sortDirection: "desc",
   filteredCharacters: [],
+  filteredCharactersMode: "AND",
   showAllAlbums: true,
   albumNameFilter: "",
 };
@@ -32,6 +33,12 @@ const historySettingsSlice = createSlice({
     setAlbumNameFilter: (state, action: PayloadAction<string>) => {
       state.albumNameFilter = action.payload;
     },
+    setFilteredCharactersMode: (
+      state,
+      action: PayloadAction<HistorySettings["filteredCharactersMode"]>
+    ) => {
+      state.filteredCharactersMode = action.payload;
+    },
     toggleShowAllAlbums: (state) => {
       state.showAllAlbums = !state.showAllAlbums;
     },
@@ -45,6 +52,7 @@ export const {
   setFilteredCharacters,
   toggleShowAllAlbums,
   setAlbumNameFilter,
+  setFilteredCharactersMode,
 } = historySettingsSlice.actions;
 
 export default historySettingsSlice.reducer;

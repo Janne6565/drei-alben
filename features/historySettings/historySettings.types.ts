@@ -5,6 +5,7 @@ export interface HistorySettings {
   sortMode: HistorySortMode;
   sortDirection: SortDirection;
   filteredCharacters: string[];
+  filteredCharactersMode: "AND" | "OR";
   showAllAlbums: boolean;
   albumNameFilter: string;
 }

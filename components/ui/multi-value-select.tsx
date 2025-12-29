@@ -3,8 +3,14 @@ import {
   convertValidityMapToArray,
 } from "@/util/array-util";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
-import { useMemo, useState } from "react";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ReactNode, useMemo, useState } from "react";
+import {
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableOpacityProps,
+  View,
+} from "react-native";
 import { Checkbox, Icon } from "react-native-paper";
 import { ThemedText } from "../themed-text";
 import Modal from "./modal";
@@ -26,6 +32,8 @@ export function MultiValueSelect<T>(props: {
   onChange: OnChangeType;
   label: string;
   onOpen?: () => void;
+  endDecorrator?: ReactNode;
+  style?: TouchableOpacityProps["style"];
 }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [internalSelectedValues, internalSetSelectedValues] = useState<
@@ -75,14 +83,17 @@ export function MultiValueSelect<T>(props: {
     <>
       <View>
         <TouchableOpacity
-          style={{
-            width: "100%",
-            backgroundColor: "rgba(255, 255, 255, 0.2)",
-            paddingVertical: 8,
-            paddingHorizontal: 15,
-            borderRadius: 10,
-            flexDirection: "row",
-          }}
+          style={[
+            {
+              width: "100%",
+              backgroundColor: "rgba(255, 255, 255, 0.2)",
+              paddingVertical: 8,
+              paddingHorizontal: 15,
+              borderRadius: 10,
+              flexDirection: "row",
+            },
+            props.style,
+          ]}
           onPress={() => {
             props.onOpen && props.onOpen();
             setModalVisible(true);
@@ -94,9 +105,10 @@ export function MultiValueSelect<T>(props: {
             color="white"
             style={{ alignSelf: "center" }}
           />
-          <ThemedText style={{ alignSelf: "center", paddingLeft: 5 }}>
+          <ThemedText style={{ alignSelf: "center", paddingLeft: 5, flex: 1 }}>
             {props.label}
           </ThemedText>
+          <View style={{ alignSelf: "flex-end" }}>{props.endDecorrator}</View>
         </TouchableOpacity>
         <View
           style={{

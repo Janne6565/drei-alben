@@ -16,6 +16,7 @@ export const selectFilteredAlbums = createSelector(
       sortDirection,
       filteredCharacters,
       albumNameFilter,
+      filteredCharactersMode,
     } = historySettings;
 
     // 1. Filter by seen status
@@ -28,9 +29,13 @@ export const selectFilteredAlbums = createSelector(
       !filteredCharacters || filteredCharacters.length === 0
         ? filtered
         : filtered.filter((album) =>
-            filteredCharacters.every((character) =>
-              album.narrators?.some((narr) => narr.character === character)
-            )
+            filteredCharactersMode === "AND"
+              ? filteredCharacters.every((character) =>
+                  album.narrators?.some((narr) => narr.character === character)
+                )
+              : filteredCharacters.some((character) =>
+                  album.narrators?.some((narr) => narr.character === character)
+                )
           );
 
     // 3. Filter by Album Name
