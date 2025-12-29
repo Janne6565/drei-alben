@@ -2,7 +2,7 @@ import TextInput from "@/components/ui/text-input";
 import {
   setAlbumNameFilter,
   setFilteredCharacters,
-  toggleShowAllAlbums,
+  setShowAllAlbums,
 } from "@/features/historySettings/historySettings.slice";
 import { closeHistoryFilterModal } from "@/features/modals/modals.slice";
 import { useCharacterCounts } from "@/hooks/use-character-counts";
@@ -155,13 +155,12 @@ export function HistoryFilterModal() {
               alignItems: "center",
             }}
           >
-            <ThemedText>
-              Nur gehörte Alben anzeigen {showAllAlbums ? "ALL" : "NON"}
-            </ThemedText>
+            <ThemedText>Nur gehörte Alben anzeigen</ThemedText>
             <Switch
               value={!showAllAlbums}
+              key={showAllAlbums ? "noAll" : "all"}
               onValueChange={() => {
-                dispatch(toggleShowAllAlbums());
+                dispatch(setShowAllAlbums(!showAllAlbums));
               }}
             />
           </View>
