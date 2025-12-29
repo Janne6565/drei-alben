@@ -1,3 +1,5 @@
+import { AlbumDetailsModal } from "@/components/modals/AlbumDetailsModal";
+import { MusicProviderModal } from "@/components/modals/MusicProviderModal";
 import { fetchAlbums } from "@/features/albums/albums.thunks";
 import { fetchNarrators } from "@/features/narrators/narrators.thunks";
 import { persistor, store } from "@/store";
@@ -41,6 +43,9 @@ export default function RootLayout() {
                     options={{ headerShown: false }}
                   />
                 </Stack>
+
+                <MusicProviderModal />
+                <AlbumDetailsModal />
               </ThemeProvider>
             </PersistGate>
           </Provider>

@@ -1,15 +1,15 @@
 import { findAlbumById } from "@/features/albums/albums.selectors";
 import {
-  closeOpenAlbumModal,
+  closeMusicProviderModal,
 } from "@/features/modals/modals.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import React from "react";
-import { MusicProviderList } from "../../AlbumDisplay/MusicOpenModal/MusicOpenModal";
-import BottomModal from "../../ui/bottom-modal";
+import { MusicProviderList } from "../AlbumDisplay/MusicOpenModal/MusicOpenModal";
+import BottomModal from "../ui/bottom-modal";
 
-export function OpenAlbumModal() {
+export function MusicProviderModal() {
   const dispatch = useAppDispatch();
-  const { isOpen, albumId } = useAppSelector((state) => state.modals.openAlbum);
+  const { isOpen, albumId } = useAppSelector((state) => state.modals.musicProvider);
   const album = useAppSelector((state) => findAlbumById(state, albumId));
   const openAlbumModalRef = React.useRef<any>(null);
 
@@ -22,7 +22,7 @@ export function OpenAlbumModal() {
   }, [isOpen]);
 
   const onDismiss = () => {
-    dispatch(closeOpenAlbumModal());
+    dispatch(closeMusicProviderModal());
   };
 
   return (

@@ -9,7 +9,7 @@ export type ModalState = {
   historyFilter: {
     isOpen: boolean;
   };
-  openAlbum: {
+  musicProvider: {
     isOpen: boolean;
     albumId: string | null;
   };

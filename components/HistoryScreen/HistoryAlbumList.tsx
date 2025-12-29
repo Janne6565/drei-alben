@@ -1,10 +1,7 @@
 import { ThemedText } from "@/components/themed-text";
 import { setAlbums } from "@/features/albums/albums.slice";
 import { fetchAlbums } from "@/features/albums/albums.utils";
-import {
-  openAlbumDetailsModal,
-  openOpenAlbumModal,
-} from "@/features/modals/modals.slice";
+import { openAlbumDetailsModal, openMusicProviderModal } from "@/features/modals/modals.slice";
 import { setNarrators } from "@/features/narrators/narrators.slice";
 import { dismissAlbum } from "@/features/sessionData/sessionData.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -59,7 +56,7 @@ export const HistoryAlbumList = ({ albums }: { albums: AlbumDto[] }) => {
             dispatch(openAlbumDetailsModal(album.id))
           }
           openModal={openRemoveConfirmationModal}
-          openAlbumModal={(album) => dispatch(openOpenAlbumModal(album.id))}
+          openAlbumModal={(album) => dispatch(openMusicProviderModal(album.id))}
         />
       )}
       keyExtractor={(alb) => alb.id}
