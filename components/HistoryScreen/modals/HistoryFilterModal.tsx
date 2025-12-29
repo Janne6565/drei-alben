@@ -101,6 +101,7 @@ export function HistoryFilterModal() {
                   width: "100%",
                   marginTop: 0,
                 }}
+                autoCorrect={false}
                 defaultValue={albumNameFilter}
                 onChangeText={(updatedText) => {
                   setSearchString(updatedText);
