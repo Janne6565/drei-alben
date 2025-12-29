@@ -12,6 +12,8 @@ const initialState: HistorySettings = {
   filteredCharactersMode: "AND",
   showAllAlbums: true,
   albumNameFilter: "",
+  startDate: null,
+  endDate: null,
 };
 
 const historySettingsSlice = createSlice({
@@ -42,6 +44,12 @@ const historySettingsSlice = createSlice({
     toggleShowAllAlbums: (state) => {
       state.showAllAlbums = !state.showAllAlbums;
     },
+    setStartDate: (state, action: PayloadAction<string | null>) => {
+      state.startDate = action.payload;
+    },
+    setEndDate: (state, action: PayloadAction<string | null>) => {
+      state.endDate = action.payload;
+    },
   },
 });
 
@@ -53,6 +61,8 @@ export const {
   toggleShowAllAlbums,
   setAlbumNameFilter,
   setFilteredCharactersMode,
+  setStartDate,
+  setEndDate,
 } = historySettingsSlice.actions;
 
 export default historySettingsSlice.reducer;

@@ -10,6 +10,8 @@ import BottomModal from "../../ui/bottom-modal";
 import { AlbumNameFilter } from "./filters/AlbumNameFilter";
 import CharacterFilter from "./filters/CharacterFilter";
 import { ShowAllAlbumsFilter } from "./filters/ShowAllAlbumsFilter";
+import { StartDateFilter } from "./filters/StartDateFilter";
+import { EndDateFilter } from "./filters/EndDateFilter";
 
 const HistoryFilterModal = () => {
   const dispatch = useAppDispatch();
@@ -60,6 +62,8 @@ const HistoryFilterModal = () => {
             />
             <CharacterFilter />
             <ShowAllAlbumsFilter />
+            <StartDateFilter />
+            <EndDateFilter />
           </View>
         </Pressable>
       </BottomSheetView>

@@ -17,6 +17,8 @@ export const selectFilteredAlbums = createSelector(
       filteredCharacters,
       albumNameFilter,
       filteredCharactersMode,
+      startDate,
+      endDate,
     } = historySettings;
 
     // 1. Filter by seen status
@@ -38,8 +40,29 @@ export const selectFilteredAlbums = createSelector(
                 )
           );
 
-    // 3. Filter by Album Name
-    const searcher = new FuzzySearch(characterFiltered, ["name", "number"], {
+    // 3. Filter by Start and End Date
+    const parsedStartDate = startDate ? new Date(startDate) : null;
+    const parsedEndDate = endDate ? new Date(endDate) : null;
+
+    const dateFiltered = characterFiltered.filter((album) => {
+      const releaseDate = album.release_date ? new Date(album.release_date) : null;
+      if (!releaseDate) return true; // Include albums without a release date if date filters are active.
+
+      let isAfterStartDate = true;
+      if (parsedStartDate) {
+        isAfterStartDate = releaseDate >= parsedStartDate;
+      }
+
+      let isBeforeEndDate = true;
+      if (parsedEndDate) {
+        isBeforeEndDate = releaseDate <= parsedEndDate;
+      }
+
+      return isAfterStartDate && isBeforeEndDate;
+    });
+
+    // 4. Filter by Album Name
+    const searcher = new FuzzySearch(dateFiltered, ["name", "number"], {
       sort: true,
     });
 
@@ -49,7 +72,7 @@ export const selectFilteredAlbums = createSelector(
     if (sortMode === "searchAccuracy") {
       sorted = albumNameFiltered;
     } else {
-      // 4. Sort
+      // 5. Sort
       sorted = albumNameFiltered.sort((a, b) => {
         let comparison = 0;
         if (sortMode === "releaseDate") {

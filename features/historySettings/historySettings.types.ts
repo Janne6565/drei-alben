@@ -8,4 +8,6 @@ export interface HistorySettings {
   filteredCharactersMode: "AND" | "OR";
   showAllAlbums: boolean;
   albumNameFilter: string;
+  startDate: string | null;
+  endDate: string | null;
 }
