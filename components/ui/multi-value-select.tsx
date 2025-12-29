@@ -21,6 +21,7 @@ export function MultiValueSelect<T>(props: {
   options: Option<T>[];
   defaultValue?: string[];
   keyExtractor: (opt: T) => string;
+  searchStringExtractor: (opt: T) => string;
   value?: Record<string, boolean>;
   onChange: OnChangeType;
   label: string;
@@ -47,12 +48,15 @@ export function MultiValueSelect<T>(props: {
     ? props.onChange
     : updateInternalSelectedValues;
   const [search, setSearch] = useState("");
+  const searchStringExtractor = props.searchStringExtractor;
   const filteredOptions = useMemo(
     () =>
       props.options.filter((item) =>
-        item.label.toLowerCase().includes(search.toLowerCase())
+        searchStringExtractor(item.value)
+          .toLowerCase()
+          .includes(search.toLowerCase())
       ),
-    [search, props.options]
+    [props.options, search, searchStringExtractor]
   );
 
   const toggleOption = (value: string) =>
