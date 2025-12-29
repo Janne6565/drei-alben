@@ -41,7 +41,7 @@ const CharacterFilter = () => {
   return (
     <View style={styles.option}>
       <ThemedText style={styles.optionHeader}>
-        Folgen durch Personen filtern
+        Folgen durch Personen filtern:
       </ThemedText>
       <MultiValueSelect
         style={{ paddingRight: 10 }}

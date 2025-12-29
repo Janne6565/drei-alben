@@ -45,17 +45,19 @@ export const selectFilteredAlbums = createSelector(
     const parsedEndDate = endDate ? new Date(endDate) : null;
 
     const dateFiltered = characterFiltered.filter((album) => {
-      const releaseDate = album.release_date ? new Date(album.release_date) : null;
+      const releaseDate = album.release_date
+        ? new Date(album.release_date)
+        : null;
       if (!releaseDate) return true; // Include albums without a release date if date filters are active.
 
       let isAfterStartDate = true;
       if (parsedStartDate) {
-        isAfterStartDate = releaseDate >= parsedStartDate;
+        isAfterStartDate = releaseDate <= parsedStartDate;
       }
 
       let isBeforeEndDate = true;
       if (parsedEndDate) {
-        isBeforeEndDate = releaseDate <= parsedEndDate;
+        isBeforeEndDate = releaseDate >= parsedEndDate;
       }
 
       return isAfterStartDate && isBeforeEndDate;

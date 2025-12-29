@@ -1,5 +1,5 @@
-import TextInput from "@/components/ui/text-input";
 import { ThemedText } from "@/components/themed-text";
+import TextInput from "@/components/ui/text-input";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -19,14 +19,15 @@ export function AlbumNameFilter({
   return (
     <View style={styles.option}>
       <ThemedText style={styles.optionHeader}>
-        Folgen durch Titel filtern
+        Folgen durch Titel/Nummer filtern:
       </ThemedText>
 
       <TextInput
-        placeholder="Folgentitel..."
+        placeholder="Folgentitel/Nummer..."
         style={{
           width: "100%",
           marginTop: 0,
+          marginBottom: 0,
         }}
         autoCorrect={false}
         value={searchString}

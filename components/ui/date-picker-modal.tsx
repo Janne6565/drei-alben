@@ -1,116 +1,81 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
-import { Modal, Platform, Pressable, StyleSheet, View } from "react-native";
-import { PrimaryButton } from "../PrimaryButton";
+import { Platform, Switch, View } from "react-native";
 import { ThemedText } from "../themed-text";
-import { ThemedView } from "../themed-view";
 
 interface DatePickerModalProps {
   value: Date | null;
   onChange: (date: Date | null) => void;
-  placeholder: string;
+  toggleable?: boolean;
+  onToggle?: (isEnabled: boolean) => void;
+  isEnabled?: boolean;
 }
 
-export function DatePickerModal({
+const DatePicker = ({
   value,
   onChange,
-  placeholder,
-}: DatePickerModalProps) {
-  const [show, setShow] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(value);
+  toggleable,
+  isEnabled: isEnabledProp,
+  onToggle,
+}: DatePickerModalProps) => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(
+    value ?? new Date()
+  );
+  const [isEnabledState, setEnabledState] = useState(!!isEnabledProp);
+  const isEnabled = toggleable ? isEnabledState : true;
 
-  const onDateChange = (event: any, date?: Date) => {
+  const onDateChange = (_event: any, date?: Date) => {
     if (Platform.OS === "android") {
-      setShow(false);
       setSelectedDate(date || value);
       onChange(date || null);
     } else {
-      // iOS
+      onChange(date || value);
       setSelectedDate(date || value);
     }
   };
-
-  const confirmIosDate = () => {
-    setShow(false);
-    onChange(selectedDate);
+  const setToggle = (newEnabled: boolean) => {
+    setEnabledState(newEnabled);
+    if (newEnabled) {
+      onChange(selectedDate);
+    } else {
+      onChange(null);
+    }
   };
-
-  const cancelIosDate = () => {
-    setShow(false);
-    setSelectedDate(value); // Reset to original value on cancel
-  };
-
-  const displayDate = value ? value.toISOString().split("T")[0] : placeholder;
 
   return (
-    <View>
-      <Pressable onPress={() => setShow(true)} style={styles.inputContainer}>
-        <ThemedText>{displayDate}</ThemedText>
-      </Pressable>
-
-      {show && (
-        <Modal
-          transparent={true}
-          animationType="slide"
-          visible={show}
-          onRequestClose={() => setShow(false)}
+    <View style={{ flexDirection: "row" }}>
+      {toggleable && (
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            alignContent: "center",
+            alignItems: "center",
+            flex: 1,
+            gap: 5,
+          }}
         >
-          <ThemedView style={styles.centeredView}>
-            <ThemedView style={styles.modalView}>
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={selectedDate || new Date()}
-                mode="date"
-                display="spinner"
-                onChange={onDateChange}
-              />
-              {Platform.OS === "ios" && (
-                <View style={styles.iosButtonContainer}>
-                  <PrimaryButton onPress={cancelIosDate} label="Cancel" />
-                  <PrimaryButton onPress={confirmIosDate} label="Confirm" />
-                </View>
-              )}
-            </ThemedView>
-          </ThemedView>
-        </Modal>
+          <ThemedText style={{ opacity: 0.9 }}>Filter aktiv: </ThemedText>
+          <Switch
+            value={isEnabled}
+            onValueChange={(newVal) => {
+              setToggle(newVal);
+            }}
+            style={{ alignSelf: "center" }}
+          />
+        </View>
       )}
+      <DateTimePicker
+        testID="dateTimePicker"
+        value={selectedDate || new Date()}
+        mode="date"
+        display="compact"
+        disabled={!isEnabled}
+        onChange={onDateChange}
+        style={{ opacity: isEnabled ? 1 : 0.5 }}
+      />
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  inputContainer: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    borderRadius: 5,
-    minHeight: 40,
-    justifyContent: "center",
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  iosButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    marginTop: 10,
-  },
-});
+export default DatePicker;

@@ -1,11 +1,11 @@
 import { ThemedText } from "@/components/themed-text";
+import DatePicker from "@/components/ui/date-picker-modal";
+import { setEndDate } from "@/features/historySettings/historySettings.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setEndDate } from "@/features/historySettings/historySettings.slice";
-import { DatePickerModal } from "@/components/ui/date-picker-modal";
 
-export function EndDateFilter() {
+const EndDateFilter = () => {
   const dispatch = useAppDispatch();
   const { endDate } = useAppSelector((state) => state.historySettings);
 
@@ -17,20 +17,22 @@ export function EndDateFilter() {
 
   return (
     <View style={styles.option}>
-      <ThemedText style={styles.optionHeader}>
-        End-Datum für Release
-      </ThemedText>
+      <ThemedText style={styles.optionHeader}>Veröffentlich nach:</ThemedText>
 
-      <DatePickerModal
+      <DatePicker
+        toggleable
         value={dateValue}
         onChange={handleDateChange}
-        placeholder="YYYY-MM-DD"
+        onToggle={(enabled) => !enabled && handleDateChange(null)}
+        isEnabled={!!endDate}
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   option: { gap: 5 },
   optionHeader: { opacity: 0.7 },
 });
+
+export default EndDateFilter;

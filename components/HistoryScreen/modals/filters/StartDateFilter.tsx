@@ -1,11 +1,11 @@
 import { ThemedText } from "@/components/themed-text";
+import DatePicker from "@/components/ui/date-picker-modal";
+import { setStartDate } from "@/features/historySettings/historySettings.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setStartDate } from "@/features/historySettings/historySettings.slice";
-import { DatePickerModal } from "@/components/ui/date-picker-modal";
 
-export function StartDateFilter() {
+const StartDateFilter = () => {
   const dispatch = useAppDispatch();
   const { startDate } = useAppSelector((state) => state.historySettings);
 
@@ -17,20 +17,22 @@ export function StartDateFilter() {
 
   return (
     <View style={styles.option}>
-      <ThemedText style={styles.optionHeader}>
-        Start-Datum für Release
-      </ThemedText>
+      <ThemedText style={styles.optionHeader}>Veröffentlich vor:</ThemedText>
 
-      <DatePickerModal
+      <DatePicker
+        toggleable
         value={dateValue}
         onChange={handleDateChange}
-        placeholder="YYYY-MM-DD"
+        onToggle={(enabled) => !enabled && handleDateChange(null)}
+        isEnabled={!!startDate}
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   option: { gap: 5 },
   optionHeader: { opacity: 0.7 },
 });
+
+export default StartDateFilter;
