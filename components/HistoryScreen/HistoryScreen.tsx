@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { HistoryAlbumList } from "./HistoryAlbumList";
 import { HistoryHeader } from "./HistoryHeader";
 import { HistoryProgress } from "./HistoryProgress";
-import { HistoryFilterModal } from "./modals/HistoryFilterModal";
+import HistoryFilterModal from "./modals/HistoryFilterModal";
 import { HistoryOptionsModal } from "./modals/HistoryOptionsModal";
 
 export const HistoryScreen = () => {

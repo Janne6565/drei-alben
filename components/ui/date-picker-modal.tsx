@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Platform, Pressable, Modal, View, StyleSheet } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import React, { useState } from "react";
+import { Modal, Platform, Pressable, StyleSheet, View } from "react-native";
+import { PrimaryButton } from "../PrimaryButton";
 import { ThemedText } from "../themed-text";
 import { ThemedView } from "../themed-view";
-import PrimaryButton from "../PrimaryButton";
 
 interface DatePickerModalProps {
   value: Date | null;
@@ -66,8 +66,8 @@ export function DatePickerModal({
               />
               {Platform.OS === "ios" && (
                 <View style={styles.iosButtonContainer}>
-                  <PrimaryButton onPress={cancelIosDate} text="Cancel" />
-                  <PrimaryButton onPress={confirmIosDate} text="Confirm" />
+                  <PrimaryButton onPress={cancelIosDate} label="Cancel" />
+                  <PrimaryButton onPress={confirmIosDate} label="Confirm" />
                 </View>
               )}
             </ThemedView>
