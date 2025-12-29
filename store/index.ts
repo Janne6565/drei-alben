@@ -1,4 +1,5 @@
 import albumsReducer from "@/features/albums/albums.slice";
+import modalsReducer from "@/features/modals/modals.slice";
 import historySettings from "@/features/historySettings/historySettings.slice";
 import narratorReducer from "@/features/narrators/narrators.slice";
 import sessionDataReducer from "@/features/sessionData/sessionData.slice";
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   narrators: narratorReducer,
   sessionData: sessionDataReducer,
   historySettings: historySettings,
+  modals: modalsReducer,
 });
 
 const persistConfig = {

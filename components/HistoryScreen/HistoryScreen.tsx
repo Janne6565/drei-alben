@@ -1,158 +1,41 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { setAlbums } from "@/features/albums/albums.slice";
-import { fetchAlbums } from "@/features/albums/albums.utils";
-import { setNarrators } from "@/features/narrators/narrators.slice";
-import {
-  clearSeenAlbums,
-  dismissAlbum,
-} from "@/features/sessionData/sessionData.slice";
 import { useFilteredAlbums } from "@/hooks/use-filtered-albums";
-import { useThemeColor } from "@/hooks/use-theme-color";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { AlbumDto } from "@/types/albums";
-import { assertUserConfirmation } from "@/util/assert-user-confirmation";
-import Feather from "@expo/vector-icons/Feather";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useRef, useState } from "react";
-import {
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import * as Progress from "react-native-progress";
+import { useAppSelector } from "@/store/hooks";
+import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { HistoryModals } from "./HistoryModals";
-import { HistoryScreenAlbumColumn } from "./HistoryScreenAlbumColumn";
+import { AlbumDetailsModal } from "./modals/AlbumDetailsModal";
+import { HistoryFilterModal } from "./modals/HistoryFilterModal";
+import { HistoryOptionsModal } from "./modals/HistoryOptionsModal";
+import { OpenAlbumModal } from "./modals/OpenAlbumModal";
+import { HistoryAlbumList } from "./HistoryAlbumList";
+import { HistoryHeader } from "./HistoryHeader";
+import { HistoryProgress } from "./HistoryProgress";
 
 export const HistoryScreen = () => {
-  const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
-  const [refreshing, setRefreshing] = useState(false);
-  const { seenAlbums } = useAppSelector((state) => state.sessionData.data);
-  const [selectedAlbum, setSelectedAlbum] = useState<AlbumDto | null>(null);
-
-  const albumDetailsModalRef = useRef<BottomSheetModal>(null);
-  const optionsModalRef = useRef<BottomSheetModal>(null);
-  const filterModalRef = useRef<BottomSheetModal>(null);
-  const openAlbumModalRef = useRef<BottomSheetModal>(null);
-
   const seenAlbumsData = useFilteredAlbums();
-
-  const openModal = (album: AlbumDto) => {
-    assertUserConfirmation({
-      title: "Bestätigen",
-      message: `Möchtest du "${album.name}" wirklich aus deiner Historie entfernen?`,
-      onConfirm: () => dispatch(dismissAlbum(album.id)),
-      confirmationText: "Entfernen",
-    });
-  };
-
-  const openClearAllModal = () => {
-    assertUserConfirmation({
-      title: "Bestätigen",
-      message:
-        "Bist du dir sicher, dass du deine gesamte Historie zurücksetzen willst?",
-      onConfirm: () => dispatch(clearSeenAlbums()),
-      confirmationText: "Zurücksetzen",
-    });
-  };
-
-  const refreshAlbums = async () => {
-    setRefreshing(true);
-    const { albums, narrators } = await fetchAlbums();
-    dispatch(setAlbums(albums));
-    dispatch(setNarrators(narrators));
-    setRefreshing(false);
-  };
-
-  const openDetailsModal = (album: AlbumDto) => {
-    setSelectedAlbum(album);
-    albumDetailsModalRef.current?.present();
-  };
-
-  const textColorPrimary = useThemeColor(
-    { dark: "rgba(120, 120, 200, 1)" },
-    "text"
-  );
-  const textColorSecondary = useThemeColor({ dark: "lightblue" }, "text");
+  const { seenAlbums } = useAppSelector((state) => state.sessionData.data);
+  const seenAlbumsCount = seenAlbumsData.filter(
+    (album) => !!seenAlbums[album.id]
+  ).length;
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.headerButtons}>
-        <TouchableOpacity
-          onPress={() => filterModalRef.current?.present()}
-          hitSlop={10}
-        >
-          <Feather name="filter" size={24} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => optionsModalRef.current?.present()}
-          hitSlop={10}
-        >
-          <Feather name="settings" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
-
+      <HistoryHeader />
       <ThemedText style={styles.title}>Historie</ThemedText>
-      {seenAlbumsData.length > 0 ? (
-        <>
-          <View style={{ paddingBottom: 5, gap: 3 }}>
-            <ThemedText style={{ alignSelf: "center" }}>
-              Gehörte Alben:{" "}
-              {seenAlbumsData.filter((album) => !!seenAlbums[album.id]).length}{" "}
-              / {seenAlbumsData.length}
-            </ThemedText>
-            <Progress.Bar
-              width={300}
-              color={"rgba(82, 180, 230, 1)"}
-              style={{ alignSelf: "center" }}
-              progress={
-                seenAlbumsData.filter((album) => !!seenAlbums[album.id])
-                  .length / seenAlbumsData.length
-              }
-            />
-          </View>
-
-          <FlatList
-            data={seenAlbumsData}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={refreshAlbums}
-              />
-            }
-            renderItem={({ item }) => (
-              <HistoryScreenAlbumColumn
-                item={item}
-                seenAlbums={seenAlbums}
-                openDetailsModal={openDetailsModal}
-                openModal={openModal}
-                openAlbumModalRef={openAlbumModalRef}
-                setSelectedAlbum={setSelectedAlbum}
-                textColorPrimary={textColorPrimary}
-                textColorSecondary={textColorSecondary}
-              />
-            )}
-            keyExtractor={(alb) => alb.id}
-          />
-        </>
-      ) : (
-        <View style={styles.centeredView}>
-          <ThemedText>Keine gehörten Alben</ThemedText>
-        </View>
+      {seenAlbumsData.length > 0 && (
+        <HistoryProgress
+          totalAlbums={seenAlbumsData.length}
+          seenAlbumsCount={seenAlbumsCount}
+        />
       )}
+      <HistoryAlbumList albums={seenAlbumsData} />
 
-      <HistoryModals
-        openAlbumModalRef={openAlbumModalRef}
-        filterModalRef={filterModalRef}
-        albumDetailsModalRef={albumDetailsModalRef}
-        optionsModalRef={optionsModalRef}
-        selectedAlbum={selectedAlbum}
-        openClearAllModal={openClearAllModal}
-      />
+      <AlbumDetailsModal />
+      <HistoryOptionsModal />
+      <HistoryFilterModal />
+      <OpenAlbumModal />
     </ThemedView>
   );
 };
@@ -167,18 +50,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 16,
     marginTop: 5,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerButtons: {
-    position: "absolute",
-    top: 55,
-    right: 16,
-    zIndex: 10,
-    flexDirection: "row",
-    gap: 15,
   },
 });

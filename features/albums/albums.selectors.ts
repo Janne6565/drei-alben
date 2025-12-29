@@ -45,6 +45,11 @@ export const selectFilteredAlbums = createSelector(
   }
 );
 
+export const findAlbumById = (state: RootState, albumId: string | null) => {
+  if (!albumId) return null;
+  return state.albums.data.find((album) => album.id === albumId);
+};
+
 export const selectCharacterCounts = createSelector(
   [selectFilteredAlbums],
   (filteredAlbums) => {

@@ -4,9 +4,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { AlbumDto } from "@/types/albums";
 import { assertUserConfirmation } from "@/util/assert-user-confirmation";
 import { formatDate } from "@/util/format-date";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
-import { RefObject } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import AlbumUnseeButton from "../AlbumButtons/AlbumUnseeButton";
 import AlreadySeenButton from "../AlbumButtons/AlreadySeenButton";
@@ -17,10 +15,7 @@ interface HistoryScreenAlbumColumnProps {
   seenAlbums: Record<string, number>;
   openDetailsModal: (album: AlbumDto) => void;
   openModal: (album: AlbumDto) => void;
-  openAlbumModalRef: RefObject<BottomSheetModal | null>;
-  setSelectedAlbum: (album: AlbumDto) => void;
-  textColorPrimary: string;
-  textColorSecondary: string;
+  openAlbumModal: (album: AlbumDto) => void;
 }
 
 export const HistoryScreenAlbumColumn = ({
@@ -28,10 +23,7 @@ export const HistoryScreenAlbumColumn = ({
   seenAlbums,
   openDetailsModal,
   openModal,
-  openAlbumModalRef,
-  setSelectedAlbum,
-  textColorPrimary,
-  textColorSecondary,
+  openAlbumModal,
 }: HistoryScreenAlbumColumnProps) => {
   const dispatch = useAppDispatch();
   const hasBeenSeen = seenAlbums[item.id];
@@ -101,8 +93,7 @@ export const HistoryScreenAlbumColumn = ({
           )}
           <OpenAlbumButton
             onPress={() => {
-              openAlbumModalRef.current?.present();
-              setSelectedAlbum(item);
+              openAlbumModal(item);
             }}
             size={"M"}
           />
