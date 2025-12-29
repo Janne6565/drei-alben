@@ -8,6 +8,7 @@ import {
 const TextInput = (props: TextInputProps & { ref?: Ref<NativeTextInput> }) => {
   return (
     <NativeTextInput
+      placeholderTextColor={"rgba(255, 255, 255, 0.4)"}
       {...props}
       ref={props.ref}
       style={[styles.input, props.style]}

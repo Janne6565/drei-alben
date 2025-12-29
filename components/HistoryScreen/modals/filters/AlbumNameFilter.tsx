@@ -25,6 +25,7 @@ export function AlbumNameFilter({
       <TextInput
         placeholder="Folgentitel/Nummer..."
         style={{
+          color: "white",
           width: "100%",
           marginTop: 0,
           marginBottom: 0,

@@ -73,6 +73,7 @@ const DatePicker = ({
         disabled={!isEnabled}
         onChange={onDateChange}
         style={{ opacity: isEnabled ? 1 : 0.5 }}
+        themeVariant="dark"
       />
     </View>
   );
