@@ -1,4 +1,4 @@
-export type HistorySortMode = "listenedDate" | "releaseDate";
+export type HistorySortMode = "listenedDate" | "releaseDate" | "searchAccuracy";
 export type SortDirection = "asc" | "desc";
 
 export interface HistorySettings {
@@ -6,4 +6,5 @@ export interface HistorySettings {
   sortDirection: SortDirection;
   filteredCharacters: string[];
   showAllAlbums: boolean;
+  albumNameFilter: string;
 }

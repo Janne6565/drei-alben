@@ -25,6 +25,7 @@ export function MultiValueSelect<T>(props: {
   value?: Record<string, boolean>;
   onChange: OnChangeType;
   label: string;
+  onOpen?: () => void;
 }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [internalSelectedValues, internalSetSelectedValues] = useState<
@@ -82,7 +83,10 @@ export function MultiValueSelect<T>(props: {
             borderRadius: 10,
             flexDirection: "row",
           }}
-          onPress={() => setModalVisible(true)}
+          onPress={() => {
+            props.onOpen && props.onOpen();
+            setModalVisible(true);
+          }}
         >
           <EvilIcons
             name="search"

@@ -1,15 +1,22 @@
-import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "@/store";
+import { createSelector } from "@reduxjs/toolkit";
+import FuzzySearch from "fuzzy-search";
 
 const selectAlbums = (state: RootState) => state.albums.data;
-const selectSeenAlbums = (state: RootState) => state.sessionData.data.seenAlbums;
+const selectSeenAlbums = (state: RootState) =>
+  state.sessionData.data.seenAlbums;
 const selectHistorySettings = (state: RootState) => state.historySettings;
 
 export const selectFilteredAlbums = createSelector(
   [selectAlbums, selectSeenAlbums, selectHistorySettings],
   (albums, seenAlbums, historySettings) => {
-    const { sortMode, showAllAlbums, sortDirection, filteredCharacters } =
-      historySettings;
+    const {
+      sortMode,
+      showAllAlbums,
+      sortDirection,
+      filteredCharacters,
+      albumNameFilter,
+    } = historySettings;
 
     // 1. Filter by seen status
     const filtered = showAllAlbums
@@ -26,20 +33,32 @@ export const selectFilteredAlbums = createSelector(
             )
           );
 
-    // 3. Sort
-    const sorted = characterFiltered.sort((a, b) => {
-      let comparison = 0;
-      if (sortMode === "releaseDate") {
-        comparison = Date.parse(b.release_date) - Date.parse(a.release_date);
-      } else {
-        // 'listenedDate'
-        const aDate = seenAlbums[a.id] || 0;
-        const bDate = seenAlbums[b.id] || 0;
-        comparison = bDate - aDate;
-      }
-
-      return sortDirection === "asc" ? -comparison : comparison;
+    // 3. Filter by Album Name
+    const searcher = new FuzzySearch(characterFiltered, ["name", "number"], {
+      sort: true,
     });
+
+    const albumNameFiltered = searcher.search(albumNameFilter);
+
+    let sorted;
+    if (sortMode === "searchAccuracy") {
+      sorted = albumNameFiltered;
+    } else {
+      // 4. Sort
+      sorted = albumNameFiltered.sort((a, b) => {
+        let comparison = 0;
+        if (sortMode === "releaseDate") {
+          comparison = Date.parse(b.release_date) - Date.parse(a.release_date);
+        } else {
+          // 'listenedDate'
+          const aDate = seenAlbums[a.id] || 0;
+          const bDate = seenAlbums[b.id] || 0;
+          comparison = bDate - aDate;
+        }
+
+        return sortDirection === "asc" ? -comparison : comparison;
+      });
+    }
 
     return sorted;
   }

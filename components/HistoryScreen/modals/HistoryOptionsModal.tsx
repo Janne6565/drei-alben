@@ -1,10 +1,12 @@
-import { closeHistoryOptionsModal } from "@/features/modals/modals.slice";
 import {
   setSortDirection,
   setSortMode,
 } from "@/features/historySettings/historySettings.slice";
 import { HistorySortMode } from "@/features/historySettings/historySettings.types";
+import { closeHistoryOptionsModal } from "@/features/modals/modals.slice";
+import { clearSeenAlbums } from "@/features/sessionData/sessionData.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { assertUserConfirmation } from "@/util/assert-user-confirmation";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
@@ -13,8 +15,6 @@ import { OptionRow } from "../../OptionRow";
 import { PrimaryButton } from "../../PrimaryButton";
 import { ThemedText } from "../../themed-text";
 import BottomModal from "../../ui/bottom-modal";
-import { assertUserConfirmation } from "@/util/assert-user-confirmation";
-import { clearSeenAlbums } from "@/features/sessionData/sessionData.slice";
 
 export function HistoryOptionsModal() {
   const dispatch = useAppDispatch();
@@ -47,7 +47,7 @@ export function HistoryOptionsModal() {
     },
     [dispatch, sortDirection, sortMode]
   );
-  
+
   const openClearAllModal = () => {
     assertUserConfirmation({
       title: "Bestätigen",
@@ -59,7 +59,12 @@ export function HistoryOptionsModal() {
   };
 
   return (
-    <BottomModal ref={optionsModalRef} height={"60%"} onDismiss={onDismiss} asChild>
+    <BottomModal
+      ref={optionsModalRef}
+      height={"60%"}
+      onDismiss={onDismiss}
+      asChild
+    >
       <BottomSheetView
         style={[styles.optionsContainer, { paddingBottom: insets.bottom }]}
       >
@@ -79,6 +84,13 @@ export function HistoryOptionsModal() {
             onPress={() => handleClick("releaseDate")}
             direction={sortDirection}
           />
+
+          <OptionRow
+            label="Such übereinstimmung"
+            selected={sortMode === "searchAccuracy"}
+            onPress={() => handleClick("searchAccuracy")}
+            direction={sortDirection}
+          />
         </View>
 
         <PrimaryButton
@@ -94,18 +106,18 @@ export function HistoryOptionsModal() {
 }
 
 const styles = StyleSheet.create({
-    optionsContainer: {
-      padding: 22,
-      gap: 16,
-    },
-    modalTitle: {
-      fontSize: 20,
-      fontWeight: "bold",
-      textAlign: "center",
-      marginBottom: 12,
-    },
-    optionRow: {
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
-  });
+  optionsContainer: {
+    padding: 22,
+    gap: 16,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  optionRow: {
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+});

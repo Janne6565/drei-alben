@@ -1,11 +1,18 @@
+import { Ref } from "react";
 import {
   TextInput as NativeTextInput,
   StyleSheet,
   TextInputProps,
 } from "react-native";
 
-const TextInput = (props: TextInputProps) => {
-  return <NativeTextInput {...props} style={[styles.input, props.style]} />;
+const TextInput = (props: TextInputProps & { ref?: Ref<NativeTextInput> }) => {
+  return (
+    <NativeTextInput
+      {...props}
+      ref={props.ref}
+      style={[styles.input, props.style]}
+    />
+  );
 };
 
 const styles = StyleSheet.create({
