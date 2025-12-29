@@ -189,10 +189,11 @@ function SelectedOptionDisplay(props: { value: string; onPress: () => void }) {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "row",
+        gap: 5,
       }}
       onPress={props.onPress}
     >
-      <Icon source={"close"} size={20} />
+      <Icon source={"close"} size={20} color="white" />
       <ThemedText>{props.value}</ThemedText>
     </TouchableOpacity>
   );
