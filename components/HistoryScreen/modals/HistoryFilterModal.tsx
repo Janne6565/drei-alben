@@ -1,49 +1,21 @@
-import TextInput from "@/components/ui/text-input";
-import {
-  setAlbumNameFilter,
-  setFilteredCharacters,
-  setFilteredCharactersMode,
-  setShowAllAlbums,
-} from "@/features/historySettings/historySettings.slice";
+import { setAlbumNameFilter } from "@/features/historySettings/historySettings.slice";
 import { closeHistoryFilterModal } from "@/features/modals/modals.slice";
-import { useCharacterCounts } from "@/hooks/use-character-counts";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { shortenString } from "@/util/string-utils";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  Keyboard,
-  Pressable,
-  StyleSheet,
-  Switch,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Keyboard, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemedText } from "../../themed-text";
 import BottomModal from "../../ui/bottom-modal";
-import { MultiValueSelect } from "../../ui/multi-value-select";
+import { AlbumNameFilter } from "./filters/AlbumNameFilter";
+import CharacterFilter from "./filters/CharacterFilter";
+import { ShowAllAlbumsFilter } from "./filters/ShowAllAlbumsFilter";
 
-type OnChangeType = (value: string[] | ((prev: string[]) => string[])) => void;
-
-export function HistoryFilterModal() {
+const HistoryFilterModal = () => {
   const dispatch = useAppDispatch();
   const { isOpen } = useAppSelector((state) => state.modals.historyFilter);
-  const {
-    showAllAlbums,
-    filteredCharacters,
-    albumNameFilter,
-    filteredCharactersMode,
-  } = useAppSelector((state) => state.historySettings);
-  const [searchString, setSearchString] = useState("");
-  const narratorsClean = useAppSelector((state) => state.narrators.data);
-  const characterCounts = useCharacterCounts();
+  const { albumNameFilter } = useAppSelector((state) => state.historySettings);
+  const [searchString, setSearchString] = useState(albumNameFilter);
   const insets = useSafeAreaInsets();
   const filterModalRef = useRef<BottomSheetModal>(null);
 
@@ -55,33 +27,15 @@ export function HistoryFilterModal() {
     }
   }, [isOpen]);
 
+  const submitAlbumNameFilter = useCallback(() => {
+    dispatch(setAlbumNameFilter(searchString));
+  }, [dispatch, searchString]);
+
   const onDismiss = () => {
     Keyboard.dismiss();
     submitAlbumNameFilter();
     dispatch(closeHistoryFilterModal());
   };
-
-  const narrators = useMemo(
-    () =>
-      [...narratorsClean].sort(
-        (a, b) =>
-          (characterCounts[b.character] ?? 0) -
-          (characterCounts[a.character] ?? 0)
-      ),
-    [characterCounts, narratorsClean]
-  );
-
-  const setFilteredCharactersInternal: OnChangeType = (newVal) => {
-    dispatch(
-      setFilteredCharacters(
-        typeof newVal === "function" ? newVal(filteredCharacters) : newVal
-      )
-    );
-  };
-
-  const submitAlbumNameFilter = useCallback(() => {
-    dispatch(setAlbumNameFilter(searchString));
-  }, [dispatch, searchString]);
 
   return (
     <BottomModal
@@ -94,122 +48,24 @@ export function HistoryFilterModal() {
       <BottomSheetView style={[{ paddingBottom: insets.bottom }]}>
         <Pressable onPress={Keyboard.dismiss} style={[styles.optionsContainer]}>
           <ThemedText style={styles.modalTitle}>Filter</ThemedText>
-          <View
-            style={{
-              flexDirection: "column",
-              gap: 14,
-              justifyContent: "space-between",
-            }}
-          >
-            <View style={styles.option}>
-              <ThemedText style={styles.optionHeader}>
-                Folgen durch Titel filtern
-              </ThemedText>
-
-              <TextInput
-                placeholder="Folgentitel..."
-                style={{
-                  width: "100%",
-                  marginTop: 0,
-                }}
-                autoCorrect={false}
-                defaultValue={albumNameFilter}
-                onChangeText={(updatedText) => {
-                  setSearchString(updatedText);
-                }}
-                onFocus={() => {
-                  filterModalRef.current?.snapToIndex(1);
-                }}
-                onEndEditing={() => {
-                  submitAlbumNameFilter();
-                  filterModalRef.current?.snapToIndex(0);
-                }}
-              />
-            </View>
-
-            <View style={styles.option}>
-              <ThemedText style={styles.optionHeader}>
-                Folgen durch Personen filtern
-              </ThemedText>
-              <MultiValueSelect
-                style={{ paddingRight: 10 }}
-                options={(filteredCharactersMode === "AND"
-                  ? narrators.filter(
-                      (narr) => characterCounts[narr.character] > 0
-                    )
-                  : narrators
-                ).map((narr) => {
-                  const narrLabel = shortenString(narr.character, 15);
-                  return {
-                    label:
-                      narrLabel +
-                      " (" +
-                      (filteredCharactersMode === "AND"
-                        ? characterCounts[narr.character]
-                        : narr.count) +
-                      ")",
-                    value: narr,
-                  };
-                })}
-                value={Object.fromEntries(
-                  filteredCharacters?.map((opt) => [opt, true]) ?? []
-                )}
-                onOpen={Keyboard.dismiss}
-                onChange={setFilteredCharactersInternal}
-                keyExtractor={(item) => item.character}
-                label={
-                  (filteredCharactersMode === "AND"
-                    ? Object.values(characterCounts).filter((val) => val > 0)
-                        .length
-                    : narratorsClean.length) + " Personen..."
-                }
-                searchStringExtractor={(nar) => nar.character}
-                endDecorrator={
-                  <TouchableOpacity
-                    onPress={() =>
-                      dispatch(
-                        setFilteredCharactersMode(
-                          filteredCharactersMode === "AND" ? "OR" : "AND"
-                        )
-                      )
-                    }
-                    style={{
-                      backgroundColor: "rgba(255, 255, 255, 0.3)",
-                      paddingVertical: 5,
-                      paddingHorizontal: 10,
-                      borderRadius: 25,
-                    }}
-                  >
-                    <ThemedText>
-                      {filteredCharactersMode === "AND" ? "UND" : "ODER"}
-                    </ThemedText>
-                  </TouchableOpacity>
-                }
-              />
-            </View>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              gap: 14,
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <ThemedText>Nur gehörte Alben anzeigen</ThemedText>
-            <Switch
-              value={!showAllAlbums}
-              key={showAllAlbums ? "noAll" : "all"}
-              onValueChange={() => {
-                dispatch(setShowAllAlbums(!showAllAlbums));
+          <View style={styles.filterOptionsContainer}>
+            <AlbumNameFilter
+              snapTo={(index) => filterModalRef.current?.snapToIndex(index)}
+              searchString={searchString}
+              onChangeText={setSearchString}
+              onEndEditing={() => {
+                submitAlbumNameFilter();
+                filterModalRef.current?.snapToIndex(0);
               }}
             />
+            <CharacterFilter />
+            <ShowAllAlbumsFilter />
           </View>
         </Pressable>
       </BottomSheetView>
     </BottomModal>
   );
-}
+};
 
 const styles = StyleSheet.create({
   optionsContainer: {
@@ -222,6 +78,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 12,
   },
-  option: { gap: 5 },
-  optionHeader: { opacity: 0.7 },
+  filterOptionsContainer: {
+    flexDirection: "column",
+    gap: 14,
+    justifyContent: "space-between",
+  },
 });
+
+export default HistoryFilterModal;
