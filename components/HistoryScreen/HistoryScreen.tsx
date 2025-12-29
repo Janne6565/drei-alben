@@ -32,9 +32,6 @@ export const HistoryScreen = () => {
   const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
   const { seenAlbums } = useAppSelector((state) => state.sessionData.data);
-  const { data: albums } = useAppSelector((state) => state.albums);
-  const { sortMode, showAllAlbums, sortDirection, filteredCharacters } =
-    useAppSelector((state) => state.historySettings);
   const [selectedAlbum, setSelectedAlbum] = useState<AlbumDto | null>(null);
 
   const albumDetailsModalRef = useRef<BottomSheetModal>(null);

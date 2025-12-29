@@ -4,16 +4,11 @@ import {
 } from "@/util/array-util";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { useMemo, useState } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Checkbox, Icon } from "react-native-paper";
 import { ThemedText } from "../themed-text";
 import Modal from "./modal";
+import TextInput from "./text-input";
 
 interface Option<T> {
   label: string;
@@ -85,13 +80,15 @@ export function MultiValueSelect<T>(props: {
           }}
           onPress={() => setModalVisible(true)}
         >
-          <ThemedText style={{ alignSelf: "center" }}>{props.label}</ThemedText>
           <EvilIcons
             name="search"
             size={24}
             color="white"
             style={{ alignSelf: "center" }}
           />
+          <ThemedText style={{ alignSelf: "center", paddingLeft: 5 }}>
+            {props.label}
+          </ThemedText>
         </TouchableOpacity>
         <View
           style={{
@@ -122,19 +119,19 @@ export function MultiValueSelect<T>(props: {
             flexDirection: "row",
             alignContent: "center",
             alignItems: "center",
-            justifyContent: "center",
+            justifyContent: "space-between",
+            padding: 0,
+            width: "80%",
           }}
         >
           <TextInput
-            style={styles.input}
             onChangeText={setSearch}
             value={search}
             placeholder="Suche..."
             autoCorrect={false}
-            keyboardType="default"
           />
           <TouchableOpacity
-            style={{ padding: 7, opacity: search === "" ? 0.6 : 1 }}
+            style={{ opacity: search === "" ? 0.6 : 1 }}
             onPress={() =>
               search === "" ? setModalVisible(false) : setSearch("")
             }
@@ -197,17 +194,6 @@ function SelectionRow<T>(props: {
 }
 
 const styles = StyleSheet.create({
-  input: {
-    borderColor: "rgba(255, 255, 255, 0.4)",
-    borderRadius: 10,
-    height: 40,
-    width: 150,
-    marginVertical: 15,
-    borderWidth: 1,
-    fontSize: 15,
-    padding: 10,
-    color: "white",
-  },
   selectionRow: {
     width: 200,
     height: 40,
