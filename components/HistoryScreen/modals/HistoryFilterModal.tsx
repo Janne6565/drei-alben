@@ -9,9 +9,9 @@ import { ThemedText } from "../../themed-text";
 import BottomModal from "../../ui/bottom-modal";
 import { AlbumNameFilter } from "./filters/AlbumNameFilter";
 import CharacterFilter from "./filters/CharacterFilter";
-import { ShowAllAlbumsFilter } from "./filters/ShowAllAlbumsFilter";
-import { StartDateFilter } from "./filters/StartDateFilter";
 import { EndDateFilter } from "./filters/EndDateFilter";
+import ShowAllAlbumsFilter from "./filters/ShowAllAlbumsFilter";
+import { StartDateFilter } from "./filters/StartDateFilter";
 
 const HistoryFilterModal = () => {
   const dispatch = useAppDispatch();

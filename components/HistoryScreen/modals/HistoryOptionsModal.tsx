@@ -16,7 +16,7 @@ import { PrimaryButton } from "../../PrimaryButton";
 import { ThemedText } from "../../themed-text";
 import BottomModal from "../../ui/bottom-modal";
 
-export function HistoryOptionsModal() {
+const HistoryOptionsModal = () => {
   const dispatch = useAppDispatch();
   const { isOpen } = useAppSelector((state) => state.modals.historyOptions);
   const { sortDirection, sortMode } = useAppSelector(
@@ -103,7 +103,7 @@ export function HistoryOptionsModal() {
       </BottomSheetView>
     </BottomModal>
   );
-}
+};
 
 const styles = StyleSheet.create({
   optionsContainer: {
@@ -121,3 +121,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+export default HistoryOptionsModal;

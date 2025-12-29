@@ -32,8 +32,8 @@ export default function RootLayout() {
   return (
     <PaperProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <BottomSheetModalProvider>
-          <Provider store={store}>
+        <Provider store={store}>
+          <BottomSheetModalProvider>
             <PersistGate loading={null} persistor={persistor}>
               <StartupLogic />
               <ThemeProvider value={DarkTheme}>
@@ -48,8 +48,8 @@ export default function RootLayout() {
                 <AlbumDetailsModal />
               </ThemeProvider>
             </PersistGate>
-          </Provider>
-        </BottomSheetModalProvider>
+          </BottomSheetModalProvider>
+        </Provider>
       </GestureHandlerRootView>
     </PaperProvider>
   );

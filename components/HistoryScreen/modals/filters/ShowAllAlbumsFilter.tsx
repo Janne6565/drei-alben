@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import React from "react";
 import { StyleSheet, Switch, View } from "react-native";
 
-export function ShowAllAlbumsFilter() {
+const ShowAllAlbumsFilter = () => {
   const dispatch = useAppDispatch();
   const { showAllAlbums } = useAppSelector((state) => state.historySettings);
 
@@ -20,7 +20,7 @@ export function ShowAllAlbumsFilter() {
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -30,3 +30,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+export default ShowAllAlbumsFilter;
