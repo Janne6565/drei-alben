@@ -1,6 +1,6 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
-import { Platform, Switch, View } from "react-native";
+import { Platform, Switch, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../themed-text";
 
 interface DatePickerModalProps {
@@ -21,6 +21,7 @@ const DatePicker = ({
   const [selectedDate, setSelectedDate] = useState<Date | null>(
     value ?? new Date()
   );
+  const [isAndroidModalOpen, setAndroidModalOpen] = useState(false);
   const [isEnabledState, setEnabledState] = useState(!!isEnabledProp);
   const isEnabled = toggleable ? isEnabledState : true;
 
@@ -33,12 +34,27 @@ const DatePicker = ({
       setSelectedDate(date || value);
     }
   };
+
   const setToggle = (newEnabled: boolean) => {
     setEnabledState(newEnabled);
     if (newEnabled) {
       onChange(selectedDate);
     } else {
       onChange(null);
+    }
+  };
+
+  const onAndroidChange = (e: {
+    type: "dismissed" | "set" | any;
+    nativeEvent: { timestamp: number };
+  }) => {
+    if (e.type === "dismissed") {
+      setAndroidModalOpen(false);
+    } else if (e.type === "set") {
+      const date = new Date(e.nativeEvent.timestamp);
+      setSelectedDate(date);
+      onChange(date);
+      setAndroidModalOpen(false);
     }
   };
 
@@ -55,7 +71,7 @@ const DatePicker = ({
             gap: 5,
           }}
         >
-          <ThemedText style={{ opacity: 0.9 }}>Filter aktiv: </ThemedText>
+          <ThemedText style={{ opacity: 0.9 }}>Filter aktiv:</ThemedText>
           <Switch
             value={isEnabled}
             onValueChange={(newVal) => {
@@ -65,16 +81,43 @@ const DatePicker = ({
           />
         </View>
       )}
-      <DateTimePicker
-        testID="dateTimePicker"
-        value={selectedDate || new Date()}
-        mode="date"
-        display="compact"
-        disabled={!isEnabled}
-        onChange={onDateChange}
-        style={{ opacity: isEnabled ? 1 : 0.5 }}
-        themeVariant="dark"
-      />
+      {Platform.OS === "ios" ? (
+        <DateTimePicker
+          value={selectedDate || new Date()}
+          mode="date"
+          display="compact"
+          disabled={!isEnabled}
+          onChange={onDateChange}
+          style={{ opacity: isEnabled ? 1 : 0.5 }}
+          themeVariant="dark"
+        />
+      ) : (
+        <View style={{ opacity: isEnabled ? 1 : 0.6 }}>
+          <TouchableOpacity onPress={() => setAndroidModalOpen(true)}>
+            <ThemedText
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.4)",
+                paddingHorizontal: 15,
+                paddingVertical: 5,
+                borderRadius: 10,
+              }}
+            >
+              {selectedDate?.toLocaleDateString()}
+            </ThemedText>
+          </TouchableOpacity>
+          {isAndroidModalOpen && (
+            <DateTimePicker
+              value={selectedDate || new Date()}
+              mode="date"
+              display="default"
+              disabled={isAndroidModalOpen}
+              onChange={onAndroidChange}
+              onBlur={() => setAndroidModalOpen(false)}
+              themeVariant="dark"
+            />
+          )}
+        </View>
+      )}
     </View>
   );
 };
