@@ -1,3 +1,4 @@
+import usePrimaryColor from "@/hooks/use-primary-color";
 import { ReactNode } from "react";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
 
@@ -7,6 +8,8 @@ const IconButton = (props: {
   style?: StyleProp<ViewStyle>;
   label?: string;
 }) => {
+  const primaryColor = usePrimaryColor();
+
   return (
     <Pressable
       onPress={() => {
@@ -18,7 +21,7 @@ const IconButton = (props: {
           backgroundColor: "rgba(255, 255, 255, 0.2)",
           borderRadius: 50,
           alignSelf: "center",
-          borderColor: "rgba(82, 180, 230, 1)",
+          borderColor: primaryColor,
           borderWidth: 2,
           aspectRatio: 1,
         },

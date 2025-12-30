@@ -10,4 +10,5 @@ export interface HistorySettings {
   albumNameFilter: string;
   startDate: string | null;
   endDate: string | null;
+  zoeMode: boolean;
 }

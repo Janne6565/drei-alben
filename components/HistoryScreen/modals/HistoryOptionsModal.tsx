@@ -1,6 +1,7 @@
 import {
   setSortDirection,
   setSortMode,
+  setZoeMode,
 } from "@/features/historySettings/historySettings.slice";
 import { HistorySortMode } from "@/features/historySettings/historySettings.types";
 import { closeHistoryOptionsModal } from "@/features/modals/modals.slice";
@@ -9,7 +10,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { assertUserConfirmation } from "@/util/assert-user-confirmation";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Switch, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { OptionRow } from "../../OptionRow";
 import { PrimaryButton } from "../../PrimaryButton";
@@ -19,7 +20,7 @@ import BottomModal from "../../ui/bottom-modal";
 const HistoryOptionsModal = () => {
   const dispatch = useAppDispatch();
   const { isOpen } = useAppSelector((state) => state.modals.historyOptions);
-  const { sortDirection, sortMode } = useAppSelector(
+  const { sortDirection, sortMode, zoeMode } = useAppSelector(
     (state) => state.historySettings
   );
   const insets = useSafeAreaInsets();
@@ -93,6 +94,20 @@ const HistoryOptionsModal = () => {
           />
         </View>
 
+        <View style={styles.container}>
+          <ThemedText style={styles.optionHeader}>Zoë Mode</ThemedText>
+          <View style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
+            <ThemedText style={{ opacity: 0.7 }}>Modus aktiv: </ThemedText>
+            <Switch
+              value={zoeMode}
+              onValueChange={(newVal) => {
+                dispatch(setZoeMode(newVal));
+              }}
+              style={{ alignSelf: "center" }}
+            />
+          </View>
+        </View>
+
         <PrimaryButton
           label="Gehörte Alben zurücksetzen"
           onPress={() => {
@@ -119,6 +134,11 @@ const styles = StyleSheet.create({
   optionRow: {
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  optionHeader: { opacity: 1 },
+  option: { gap: 5 },
+  container: {
+    gap: 5,
   },
 });
 

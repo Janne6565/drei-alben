@@ -1,3 +1,4 @@
+import usePrimaryColor from "@/hooks/use-primary-color";
 import { AlbumDto } from "@/types/albums";
 import { toUppercase } from "@/util/string-utils";
 import { Image } from "expo-image";
@@ -18,6 +19,8 @@ const AlbumDisplay = ({
   const height = Dimensions.get("window").height;
   const lines = height < 700 ? 2 : height < 800 ? 5 : 6;
   const reservedHeight = lines * DESCRIPTION_LINE_HEIGHT;
+  const primaryColor = usePrimaryColor();
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -31,7 +34,7 @@ const AlbumDisplay = ({
           height: 300,
           borderRadius: 5,
           alignSelf: "center",
-          borderColor: "rgba(82, 180, 230, 1)",
+          borderColor: primaryColor,
           borderWidth: 2,
           aspectRatio: 1,
           paddingBottom: 1,

@@ -14,6 +14,7 @@ const initialState: HistorySettings = {
   albumNameFilter: "",
   startDate: null,
   endDate: null,
+  zoeMode: false,
 };
 
 const historySettingsSlice = createSlice({
@@ -50,6 +51,9 @@ const historySettingsSlice = createSlice({
     setEndDate: (state, action: PayloadAction<string | null>) => {
       state.endDate = action.payload;
     },
+    setZoeMode: (state, action: PayloadAction<boolean>) => {
+      state.zoeMode = action.payload;
+    },
   },
 });
 
@@ -63,6 +67,7 @@ export const {
   setFilteredCharactersMode,
   setStartDate,
   setEndDate,
+  setZoeMode,
 } = historySettingsSlice.actions;
 
 export default historySettingsSlice.reducer;
