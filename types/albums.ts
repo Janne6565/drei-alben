@@ -21,7 +21,7 @@ export type AlbumDto = {
   name: string;
   number?: string | null;
 
-  type: AlbumType;
+  type: AlbumType | "regular" | "special";
   rating: number;
   number_of_ratings: number;
   popularity: number;
@@ -35,7 +35,7 @@ export type AlbumDto = {
 
   description: string;
   is_hidden: boolean;
-  narrator: string;
-  weblink: string;
+  narrator?: string;
+  weblink?: string;
   narrators?: Narrator[];
 };

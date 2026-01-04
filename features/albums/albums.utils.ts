@@ -1,11 +1,19 @@
+import offlineData from "@/assets/data/albums.json";
 import { AlbumDto, Narrator } from "@/types/albums";
+import { isNetworkConnected } from "@/util/network-util";
 
 export const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL!;
 
 export const fetchAlbums = async () => {
-  const res = await fetch(API_BASE_URL + "/v1/albums");
-  if (!res.ok) throw new Error("Failed to fetch albums");
-  const albums = (await res.json()) as AlbumDto[];
+  let albums: AlbumDto[];
+  if (await isNetworkConnected()) {
+    const res = await fetch(API_BASE_URL + "/v1/albums");
+    if (!res.ok) throw new Error("Failed to fetch albums");
+    albums = (await res.json()) as AlbumDto[];
+  } else {
+    albums = offlineData as AlbumDto[];
+  }
+
   const albumsWithNarrators = albums.map((album) => ({
     ...album,
     narrators: parseAlbumNarrators(album.narrator),
@@ -16,7 +24,7 @@ export const fetchAlbums = async () => {
   return { albums: albumsWithNarrators, narrators: totalNarrators };
 };
 
-const parseAlbumNarrators = (stringList: string) => {
+const parseAlbumNarrators = (stringList?: string) => {
   const narrators: Narrator[] = [];
   if (!stringList) {
     return [];
