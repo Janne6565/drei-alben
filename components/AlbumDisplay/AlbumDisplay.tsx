@@ -1,10 +1,10 @@
 import usePrimaryColor from "@/hooks/use-primary-color";
 import { AlbumDto } from "@/types/albums";
 import { toUppercase } from "@/util/string-utils";
-import { Image } from "expo-image";
 import { Dimensions, TouchableOpacity } from "react-native";
 import { ThemedText } from "../themed-text";
 import { ThemedView } from "../themed-view";
+import LoadableImage from "../ui/loadable-image";
 
 const DESCRIPTION_FONT_SIZE = 16;
 const DESCRIPTION_LINE_HEIGHT = 22;
@@ -27,8 +27,10 @@ const AlbumDisplay = ({
       activeOpacity={0.7}
       style={{ gap: 25, padding: 0 }}
     >
-      <Image
-        source={album.images[0].url}
+      <LoadableImage
+        source={{ uri: album.images[0].url }}
+        placeholder="|rF?hV%2WCj[ayj[a|j["
+        transition={300}
         style={{
           width: "auto",
           height: 300,

@@ -4,11 +4,11 @@ import { useAppDispatch } from "@/store/hooks";
 import { AlbumDto } from "@/types/albums";
 import { assertUserConfirmation } from "@/util/assert-user-confirmation";
 import { formatDate } from "@/util/format-date";
-import { Image } from "expo-image";
 import { Pressable, StyleSheet, View } from "react-native";
 import AlbumUnseeButton from "../AlbumButtons/AlbumUnseeButton";
 import AlreadySeenButton from "../AlbumButtons/AlreadySeenButton";
 import OpenAlbumButton from "../AlbumButtons/OpenAlbumButton";
+import LoadableImage from "../ui/loadable-image";
 
 interface HistoryScreenAlbumColumnProps {
   item: AlbumDto;
@@ -42,7 +42,10 @@ export const HistoryScreenAlbumColumn = ({
             !hasBeenSeen && { opacity: 0.5 },
           ]}
         >
-          <Image source={{ uri: item.images[0].url }} style={styles.albumArt} />
+          <LoadableImage
+            source={{ uri: item.images[0].url }}
+            style={styles.albumArt}
+          />
           <View style={styles.albumInfo}>
             <ThemedText style={styles.artistName}>
               Die drei Fragezeichen:
