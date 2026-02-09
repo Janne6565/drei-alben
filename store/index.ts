@@ -3,6 +3,7 @@ import modalsReducer from "@/features/modals/modals.slice";
 import historySettings from "@/features/historySettings/historySettings.slice";
 import narratorReducer from "@/features/narrators/narrators.slice";
 import sessionDataReducer from "@/features/sessionData/sessionData.slice";
+import notificationsReducer from "@/features/notifications/notifications.slice";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -14,12 +15,13 @@ const rootReducer = combineReducers({
   sessionData: sessionDataReducer,
   historySettings: historySettings,
   modals: modalsReducer,
+  notifications: notificationsReducer,
 });
 
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  whitelist: ["albums", "narrators", "sessionData", "historySettings"],
+  whitelist: ["albums", "narrators", "sessionData", "historySettings", "notifications"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -6,11 +6,22 @@ import {
 import { HistorySortMode } from "@/features/historySettings/historySettings.types";
 import { closeHistoryOptionsModal } from "@/features/modals/modals.slice";
 import { clearSeenAlbums } from "@/features/sessionData/sessionData.slice";
+import {
+  setNotificationEnabled,
+  setNotificationToken,
+  setPermissionGranted,
+} from "@/features/notifications/notifications.slice";
+import {
+  selectNotificationsEnabled,
+  selectNotificationToken,
+  selectPermissionGranted,
+} from "@/features/notifications/notifications.selectors";
+import { useNotifications, updateTokenEnabled } from "@/hooks/notifications/useNotifications";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { assertUserConfirmation } from "@/util/assert-user-confirmation";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback } from "react";
-import { StyleSheet, Switch, View } from "react-native";
+import { StyleSheet, Switch, View, Alert, Linking } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { OptionRow } from "../../OptionRow";
 import { PrimaryButton } from "../../PrimaryButton";
@@ -23,8 +34,21 @@ const HistoryOptionsModal = () => {
   const { sortDirection, sortMode, zoeMode } = useAppSelector(
     (state) => state.historySettings
   );
+  const enabled = useAppSelector(selectNotificationsEnabled);
+  const token = useAppSelector(selectNotificationToken);
+  const permissionGranted = useAppSelector(selectPermissionGranted);
+  const { expoPushToken, permissionStatus, requestPermissions } = useNotifications();
   const insets = useSafeAreaInsets();
   const optionsModalRef = React.useRef<any>(null);
+
+  React.useEffect(() => {
+    if (expoPushToken) {
+      dispatch(setNotificationToken(expoPushToken));
+    }
+    if (permissionStatus) {
+      dispatch(setPermissionGranted(permissionStatus.granted));
+    }
+  }, [expoPushToken, permissionStatus, dispatch]);
 
   React.useEffect(() => {
     if (isOpen) {
@@ -57,6 +81,29 @@ const HistoryOptionsModal = () => {
       onConfirm: () => dispatch(clearSeenAlbums()),
       confirmationText: "Zurücksetzen",
     });
+  };
+
+  const handleNotificationToggle = async (value: boolean) => {
+    if (!permissionGranted) {
+      const status = await requestPermissions();
+      if (!status.granted) {
+        Alert.alert(
+          "Berechtigung erforderlich",
+          "Bitte aktiviere Benachrichtigungen in deinen Geräteeinstellungen, um Updates über neue Alben zu erhalten.",
+          [
+            { text: "Abbrechen", style: "cancel" },
+            { text: "Einstellungen öffnen", onPress: () => Linking.openSettings() },
+          ]
+        );
+        return;
+      }
+      dispatch(setPermissionGranted(true));
+    }
+
+    dispatch(setNotificationEnabled(value));
+    if (expoPushToken || token) {
+      await updateTokenEnabled(expoPushToken || token!, value);
+    }
   };
 
   return (
@@ -108,6 +155,26 @@ const HistoryOptionsModal = () => {
           </View>
         </View>
 
+        <View style={styles.container}>
+          <ThemedText style={styles.optionHeader}>Benachrichtigungen</ThemedText>
+          <View style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
+            <ThemedText style={{ opacity: 0.7 }}>
+              Neue Album-Benachrichtigungen:{" "}
+            </ThemedText>
+            <Switch
+              value={enabled && permissionGranted}
+              onValueChange={handleNotificationToggle}
+              disabled={!permissionGranted && !permissionStatus?.canAskAgain}
+              style={{ alignSelf: "center" }}
+            />
+          </View>
+          {!permissionGranted && (
+            <ThemedText style={styles.warningText}>
+              Berechtigung nicht erteilt. Aktiviere in den Einstellungen, um Benachrichtigungen zu erhalten.
+            </ThemedText>
+          )}
+        </View>
+
         <PrimaryButton
           label="Gehörte Alben zurücksetzen"
           onPress={() => {
@@ -139,6 +206,12 @@ const styles = StyleSheet.create({
   option: { gap: 5 },
   container: {
     gap: 5,
+  },
+  warningText: {
+    fontSize: 12,
+    opacity: 0.7,
+    fontStyle: "italic",
+    marginTop: 4,
   },
 });
 
