@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a3b6d1e-c56f-43e9-857e-b7a3ee762205" name="Changes" comment="" />
+    <list default="true" id="1a3b6d1e-c56f-43e9-857e-b7a3ee762205" name="Changes" comment="feat: add notification settings and handling&#10;&#10;- Introduced NotificationSettings component for managing push notifications.&#10;- Added notifications slice and selectors for Redux state management.&#10;- Implemented useNotifications hook for Expo push notification support.&#10;- Updated package.json and package-lock.json with new dependencies (`expo-notifications`, `expo-device`, and others).&#10;- Synced `.idea` project files to match the updated project configuration.">
+      <change beforePath="$PROJECT_DIR$/util/music-provider-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/util/music-provider-utils.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,16 +62,16 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "/Users/jannekeipert/Applications/WebStorm.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
+    "ts.external.directory.path": "/Users/jannekeipert/ghq/github.com/janne6565/drei-alben/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecapSpentCounter">
     <option name="endsOfQuotaMs" value="1771124415395" />
-    <option name="spentUsd" value="0.043221" />
+    <option name="spentUsd" value="0.086296245" />
   </component>
   <component name="RecapUselessUpdatesCounter">
-    <option name="suspendCountdown" value="9" />
+    <option name="suspendCountdown" value="8" />
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -87,11 +89,26 @@
       <updated>1722178062384</updated>
       <workItem from="1770677849117" duration="139000" />
       <workItem from="1770677993163" duration="3562000" />
+      <workItem from="1770681566090" duration="1096000" />
     </task>
+    <task id="LOCAL-00001" summary="feat: add notification settings and handling&#10;&#10;- Introduced NotificationSettings component for managing push notifications.&#10;- Added notifications slice and selectors for Redux state management.&#10;- Implemented useNotifications hook for Expo push notification support.&#10;- Updated package.json and package-lock.json with new dependencies (`expo-notifications`, `expo-device`, and others).&#10;- Synced `.idea` project files to match the updated project configuration.">
+      <option name="closed" value="true" />
+      <created>1770681596049</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1770681596049</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="chore: add bun.lock file for dependency management with Bun" />
+    <MESSAGE value="feat: add notification settings and handling&#10;&#10;- Introduced NotificationSettings component for managing push notifications.&#10;- Added notifications slice and selectors for Redux state management.&#10;- Implemented useNotifications hook for Expo push notification support.&#10;- Updated package.json and package-lock.json with new dependencies (`expo-notifications`, `expo-device`, and others).&#10;- Synced `.idea` project files to match the updated project configuration." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add notification settings and handling&#10;&#10;- Introduced NotificationSettings component for managing push notifications.&#10;- Added notifications slice and selectors for Redux state management.&#10;- Implemented useNotifications hook for Expo push notification support.&#10;- Updated package.json and package-lock.json with new dependencies (`expo-notifications`, `expo-device`, and others).&#10;- Synced `.idea` project files to match the updated project configuration." />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
