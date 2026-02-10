@@ -4,13 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a3b6d1e-c56f-43e9-857e-b7a3ee762205" name="Changes" comment="refactor: simplify openLink function and update `.idea` workspace configuration">
+    <list default="true" id="1a3b6d1e-c56f-43e9-857e-b7a3ee762205" name="Changes" comment="feat: replace NotificationSettings component with NotificationPermissionModal&#10;&#10;- Introduced NotificationPermissionModal for a streamlined and user-friendly notification permissions flow.&#10;- Removed NotificationSettings component to simplify the notification management process.&#10;- Added `hasBeenAsked` state to track whether notification permissions have already been requested.&#10;- Updated notifications slice and selectors to handle new state.&#10;- Refactored `useNotifications` hook with improved subscriptions and permission handling.&#10;- Enhanced PrimaryButton component with an optional custom style prop.&#10;- Synced `.idea` workspace configuration to reflect updates.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/PrimaryButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/PrimaryButton.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/features/notifications/notifications.selectors.ts" beforeDir="false" afterPath="$PROJECT_DIR$/features/notifications/notifications.selectors.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/features/notifications/notifications.slice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/features/notifications/notifications.slice.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/notifications/useNotifications.ts" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/notifications/useNotifications.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/HistoryScreen/modals/HistoryOptionsModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/HistoryScreen/modals/HistoryOptionsModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/NotificationPermissionModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/NotificationPermissionModal.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,10 +73,10 @@
 }</component>
   <component name="RecapSpentCounter">
     <option name="endsOfQuotaMs" value="1771124415395" />
-    <option name="spentUsd" value="0.12958974" />
+    <option name="spentUsd" value="0.14326799" />
   </component>
   <component name="RecapUselessUpdatesCounter">
-    <option name="suspendCountdown" value="6" />
+    <option name="suspendCountdown" value="5" />
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -115,7 +112,15 @@
       <option name="project" value="LOCAL" />
       <updated>1770682685267</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="feat: replace NotificationSettings component with NotificationPermissionModal&#10;&#10;- Introduced NotificationPermissionModal for a streamlined and user-friendly notification permissions flow.&#10;- Removed NotificationSettings component to simplify the notification management process.&#10;- Added `hasBeenAsked` state to track whether notification permissions have already been requested.&#10;- Updated notifications slice and selectors to handle new state.&#10;- Refactored `useNotifications` hook with improved subscriptions and permission handling.&#10;- Enhanced PrimaryButton component with an optional custom style prop.&#10;- Synced `.idea` workspace configuration to reflect updates.">
+      <option name="closed" value="true" />
+      <created>1770684813469</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1770684813469</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -125,7 +130,10 @@
     <MESSAGE value="chore: add bun.lock file for dependency management with Bun" />
     <MESSAGE value="feat: add notification settings and handling&#10;&#10;- Introduced NotificationSettings component for managing push notifications.&#10;- Added notifications slice and selectors for Redux state management.&#10;- Implemented useNotifications hook for Expo push notification support.&#10;- Updated package.json and package-lock.json with new dependencies (`expo-notifications`, `expo-device`, and others).&#10;- Synced `.idea` project files to match the updated project configuration." />
     <MESSAGE value="refactor: simplify openLink function and update `.idea` workspace configuration" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: simplify openLink function and update `.idea` workspace configuration" />
+    <MESSAGE value="refactor: enhance error handling in openLink function and update `.idea` workspace configuration" />
+    <MESSAGE value="feat: replace NotificationSettings with NotificationPermissionModal&#10;&#10;- Redesigned notification handling flow with a new `NotificationPermissionModal`.&#10;- Removed `NotificationSettings` component and associated styles.&#10;- Added `hasBeenAsked` flag to notifications Redux slice for managing permission prompts.&#10;- Updated notifications selectors and Expo notification utility functions." />
+    <MESSAGE value="feat: replace NotificationSettings component with NotificationPermissionModal&#10;&#10;- Introduced NotificationPermissionModal for a streamlined and user-friendly notification permissions flow.&#10;- Removed NotificationSettings component to simplify the notification management process.&#10;- Added `hasBeenAsked` state to track whether notification permissions have already been requested.&#10;- Updated notifications slice and selectors to handle new state.&#10;- Refactored `useNotifications` hook with improved subscriptions and permission handling.&#10;- Enhanced PrimaryButton component with an optional custom style prop.&#10;- Synced `.idea` workspace configuration to reflect updates." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: replace NotificationSettings component with NotificationPermissionModal&#10;&#10;- Introduced NotificationPermissionModal for a streamlined and user-friendly notification permissions flow.&#10;- Removed NotificationSettings component to simplify the notification management process.&#10;- Added `hasBeenAsked` state to track whether notification permissions have already been requested.&#10;- Updated notifications slice and selectors to handle new state.&#10;- Refactored `useNotifications` hook with improved subscriptions and permission handling.&#10;- Enhanced PrimaryButton component with an optional custom style prop.&#10;- Synced `.idea` workspace configuration to reflect updates." />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

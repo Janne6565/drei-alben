@@ -1,12 +1,12 @@
 import React, {useEffect, useRef} from "react";
 import {StyleSheet, View} from "react-native";
 import {ThemedText} from "@/components/themed-text";
-import {PrimaryButton} from "@/components/PrimaryButton";
+import {Button} from "@/components/Button";
 import BottomModal from "@/components/ui/bottom-modal";
 import {BottomSheetView} from "@gorhom/bottom-sheet";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
-import {selectHasBeenAsked, selectPermissionGranted,} from "@/features/notifications/notifications.selectors";
+import {selectHasBeenAsked} from "@/features/notifications/notifications.selectors";
 import {
   setHasBeenAsked,
   setNotificationEnabled,
@@ -20,25 +20,29 @@ import {useColorScheme} from "@/hooks/use-color-scheme";
 export function NotificationPermissionModal() {
   const dispatch = useAppDispatch();
   const hasBeenAsked = useAppSelector(selectHasBeenAsked);
-  const permissionGranted = useAppSelector(selectPermissionGranted);
   const {expoPushToken, permissionStatus, requestPermissions} =
     useNotifications();
   const modalRef = useRef<any>(null);
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
-  const [isOpen, setIsOpen] = React.useState(false);
+  const userMadeChoiceRef = useRef(false); // Track if user explicitly clicked a button
 
   useEffect(() => {
-    // Show modal if user hasn't been asked yet and doesn't have permission
-    if (!hasBeenAsked && !permissionGranted) {
+    // Show modal if user hasn't been asked yet (regardless of permission status)
+    if (!hasBeenAsked) {
+      // Reset the choice tracking when modal is about to show
+      userMadeChoiceRef.current = false;
+      
       // Small delay to let app fully load
       const timer = setTimeout(() => {
-        setIsOpen(true);
+        console.log("Attempting to show notification modal, hasBeenAsked:", hasBeenAsked);
         modalRef.current?.present();
       }, 1000);
       return () => clearTimeout(timer);
+    } else {
+      modalRef.current?.dismiss();
     }
-  }, [hasBeenAsked, permissionGranted]);
+  }, [hasBeenAsked]);
 
   useEffect(() => {
     if (expoPushToken) {
@@ -50,32 +54,72 @@ export function NotificationPermissionModal() {
   }, [expoPushToken, permissionStatus, dispatch]);
 
   const handleAccept = async () => {
-    const status = await requestPermissions();
+    userMadeChoiceRef.current = true; // Mark that user made a choice
+    
+    // Request permissions if not already granted
+    const permStatus = await requestPermissions();
+    
     dispatch(setHasBeenAsked(true));
-    dispatch(setNotificationEnabled(status.granted));
-    dispatch(setPermissionGranted(status.granted));
+    dispatch(setNotificationEnabled(true));
+    dispatch(setPermissionGranted(permStatus.granted));
+    
+    // Wait a bit for expoPushToken to be set by requestPermissions
+    setTimeout(async () => {
+      const tokenToUse = expoPushToken;
+      if (tokenToUse) {
+        try {
+          const { updateTokenEnabled } = await import("@/hooks/notifications/useNotifications");
+          await updateTokenEnabled(tokenToUse, true);
+          console.log("Notification preference (enabled=true) sent to backend");
+        } catch (error) {
+          console.error("Failed to send preference to backend:", error);
+        }
+      }
+    }, 500);
+    
     modalRef.current?.dismiss();
-    setIsOpen(false);
   };
 
-  const handleDecline = () => {
+  const handleDeclineClick = async () => {
+    userMadeChoiceRef.current = true; // Mark that user made a choice
+    
+    console.log("User explicitly declined notifications");
     dispatch(setHasBeenAsked(true));
     dispatch(setNotificationEnabled(false));
+    
+    // Communicate preference to backend if we have a token
+    const tokenToUse = expoPushToken;
+    if (tokenToUse) {
+      try {
+        const { updateTokenEnabled } = await import("@/hooks/notifications/useNotifications");
+        await updateTokenEnabled(tokenToUse, false);
+        console.log("Notification preference (enabled=false) sent to backend");
+      } catch (error) {
+        console.error("Failed to send preference to backend:", error);
+      }
+    }
+    
     modalRef.current?.dismiss();
-    setIsOpen(false);
   };
 
-  if (!isOpen || hasBeenAsked) {
-    return null;
-  }
+  const handleDismiss = () => {
+    // Only run decline logic if user didn't already make a choice via buttons
+    if (userMadeChoiceRef.current) {
+      console.log("Modal dismissed but user already made a choice, skipping");
+      return;
+    }
+    
+    console.log("Modal dismissed without choice, treating as decline");
+    // User dismissed modal without clicking a button (shouldn't happen with enablePanDownToClose=false, but just in case)
+    handleDeclineClick();
+  };
 
   return (
     <BottomModal
       ref={modalRef}
       height={"50%"}
-      onDismiss={handleDecline}
+      onDismiss={handleDismiss}
       enablePanDownToClose={false}
-      asChild
     >
       <BottomSheetView
         style={[styles.container, {paddingBottom: insets.bottom}]}
@@ -102,14 +146,16 @@ export function NotificationPermissionModal() {
         </ThemedText>
 
         <View style={styles.buttonContainer}>
-          <PrimaryButton
+          <Button
             label="Ja, benachrichtigen"
             onPress={handleAccept}
+            variant="primary"
             style={styles.acceptButton}
           />
-          <PrimaryButton
+          <Button
             label="Nein, danke"
-            onPress={handleDecline}
+            onPress={handleDeclineClick}
+            variant="secondary"
             style={styles.declineButton}
           />
         </View>
@@ -153,6 +199,5 @@ const styles = StyleSheet.create({
   },
   declineButton: {
     width: "100%",
-    opacity: 0.7,
   },
 });

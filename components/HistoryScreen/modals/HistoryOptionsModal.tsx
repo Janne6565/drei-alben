@@ -1,43 +1,42 @@
+import {setSortDirection, setSortMode, setZoeMode,} from "@/features/historySettings/historySettings.slice";
+import {HistorySortMode} from "@/features/historySettings/historySettings.types";
+import {closeHistoryOptionsModal} from "@/features/modals/modals.slice";
+import {clearSeenAlbums} from "@/features/sessionData/sessionData.slice";
 import {
-  setSortDirection,
-  setSortMode,
-  setZoeMode,
-} from "@/features/historySettings/historySettings.slice";
-import { HistorySortMode } from "@/features/historySettings/historySettings.types";
-import { closeHistoryOptionsModal } from "@/features/modals/modals.slice";
-import { clearSeenAlbums } from "@/features/sessionData/sessionData.slice";
-import {
+  setHasBeenAsked,
   setNotificationEnabled,
   setNotificationToken,
   setPermissionGranted,
 } from "@/features/notifications/notifications.slice";
 import {
+  selectHasBeenAsked,
   selectNotificationsEnabled,
   selectNotificationToken,
   selectPermissionGranted,
 } from "@/features/notifications/notifications.selectors";
-import { useNotifications, updateTokenEnabled } from "@/hooks/notifications/useNotifications";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { assertUserConfirmation } from "@/util/assert-user-confirmation";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
-import React, { useCallback } from "react";
-import { StyleSheet, Switch, View, Alert, Linking } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { OptionRow } from "../../OptionRow";
-import { PrimaryButton } from "../../PrimaryButton";
-import { ThemedText } from "../../themed-text";
+import {updateTokenEnabled, useNotifications} from "@/hooks/notifications/useNotifications";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {assertUserConfirmation} from "@/util/assert-user-confirmation";
+import {BottomSheetView} from "@gorhom/bottom-sheet";
+import React, {useCallback} from "react";
+import {Alert, Linking, StyleSheet, Switch, View} from "react-native";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
+import {OptionRow} from "../../OptionRow";
+import {Button} from "../../Button";
+import {ThemedText} from "../../themed-text";
 import BottomModal from "../../ui/bottom-modal";
 
 const HistoryOptionsModal = () => {
   const dispatch = useAppDispatch();
-  const { isOpen } = useAppSelector((state) => state.modals.historyOptions);
-  const { sortDirection, sortMode, zoeMode } = useAppSelector(
+  const {isOpen} = useAppSelector((state) => state.modals.historyOptions);
+  const {sortDirection, sortMode, zoeMode} = useAppSelector(
     (state) => state.historySettings
   );
   const enabled = useAppSelector(selectNotificationsEnabled);
   const token = useAppSelector(selectNotificationToken);
   const permissionGranted = useAppSelector(selectPermissionGranted);
-  const { expoPushToken, permissionStatus, requestPermissions } = useNotifications();
+  const hasBeenAsked = useAppSelector(selectHasBeenAsked);
+  const {expoPushToken, permissionStatus, requestPermissions} = useNotifications();
   const insets = useSafeAreaInsets();
   const optionsModalRef = React.useRef<any>(null);
 
@@ -91,8 +90,8 @@ const HistoryOptionsModal = () => {
           "Berechtigung erforderlich",
           "Bitte aktiviere Benachrichtigungen in deinen Geräteeinstellungen, um Updates über neue Alben zu erhalten.",
           [
-            { text: "Abbrechen", style: "cancel" },
-            { text: "Einstellungen öffnen", onPress: () => Linking.openSettings() },
+            {text: "Abbrechen", style: "cancel"},
+            {text: "Einstellungen öffnen", onPress: () => Linking.openSettings()},
           ]
         );
         return;
@@ -106,6 +105,23 @@ const HistoryOptionsModal = () => {
     }
   };
 
+  const handleResetNotificationPrompt = () => {
+    Alert.alert(
+      "Benachrichtigungsdialog zurücksetzen?",
+      "Der Dialog zur Aktivierung von Benachrichtigungen wird beim nächsten App-Start erneut angezeigt.",
+      [
+        {text: "Abbrechen", style: "cancel"},
+        {
+          text: "Zurücksetzen",
+          style: "destructive",
+          onPress: () => {
+            dispatch(setHasBeenAsked(false));
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <BottomModal
       ref={optionsModalRef}
@@ -114,7 +130,7 @@ const HistoryOptionsModal = () => {
       asChild
     >
       <BottomSheetView
-        style={[styles.optionsContainer, { paddingBottom: insets.bottom }]}
+        style={[styles.optionsContainer, {paddingBottom: insets.bottom}]}
       >
         <ThemedText style={styles.modalTitle}>Einstellungen</ThemedText>
         <View>
@@ -143,29 +159,29 @@ const HistoryOptionsModal = () => {
 
         <View style={styles.container}>
           <ThemedText style={styles.optionHeader}>Zoë Mode</ThemedText>
-          <View style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
-            <ThemedText style={{ opacity: 0.7 }}>Modus aktiv: </ThemedText>
+          <View style={{flexDirection: "row", gap: 5, alignItems: "center"}}>
+            <ThemedText style={{opacity: 0.7}}>Modus aktiv: </ThemedText>
             <Switch
               value={zoeMode}
               onValueChange={(newVal) => {
                 dispatch(setZoeMode(newVal));
               }}
-              style={{ alignSelf: "center" }}
+              style={{alignSelf: "center"}}
             />
           </View>
         </View>
 
         <View style={styles.container}>
           <ThemedText style={styles.optionHeader}>Benachrichtigungen</ThemedText>
-          <View style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
-            <ThemedText style={{ opacity: 0.7 }}>
+          <View style={{flexDirection: "row", gap: 5, alignItems: "center"}}>
+            <ThemedText style={{opacity: 0.7}}>
               Neue Album-Benachrichtigungen:{" "}
             </ThemedText>
             <Switch
-              value={enabled && permissionGranted}
+              value={enabled}
               onValueChange={handleNotificationToggle}
               disabled={!permissionGranted && !permissionStatus?.canAskAgain}
-              style={{ alignSelf: "center" }}
+              style={{alignSelf: "center"}}
             />
           </View>
           {!permissionGranted && (
@@ -173,14 +189,23 @@ const HistoryOptionsModal = () => {
               Berechtigung nicht erteilt. Aktiviere in den Einstellungen, um Benachrichtigungen zu erhalten.
             </ThemedText>
           )}
+          {hasBeenAsked && (
+            <Button
+              label="Benachrichtigungsdialog zurücksetzen"
+              onPress={handleResetNotificationPrompt}
+              variant="secondary"
+              style={{marginTop: 12}}
+            />
+          )}
         </View>
 
-        <PrimaryButton
+        <Button
           label="Gehörte Alben zurücksetzen"
           onPress={() => {
             openClearAllModal();
             optionsModalRef.current?.dismiss();
           }}
+          variant="destructive"
         />
       </BottomSheetView>
     </BottomModal>
@@ -202,8 +227,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  optionHeader: { opacity: 1 },
-  option: { gap: 5 },
+  optionHeader: {opacity: 1},
+  option: {gap: 5},
   container: {
     gap: 5,
   },
