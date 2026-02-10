@@ -8,3 +8,6 @@ export const selectNotificationToken = (state: RootState) =>
 
 export const selectPermissionGranted = (state: RootState) =>
   state.notifications.permissionGranted;
+
+export const selectHasBeenAsked = (state: RootState) =>
+  state.notifications.hasBeenAsked;

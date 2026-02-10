@@ -4,12 +4,14 @@ export interface NotificationsState {
   enabled: boolean;
   token: string | null;
   permissionGranted: boolean;
+  hasBeenAsked: boolean;
 }
 
 const initialState: NotificationsState = {
   enabled: true,
   token: null,
   permissionGranted: false,
+  hasBeenAsked: false,
 };
 
 const notificationsSlice = createSlice({
@@ -25,6 +27,9 @@ const notificationsSlice = createSlice({
     setPermissionGranted: (state, action: PayloadAction<boolean>) => {
       state.permissionGranted = action.payload;
     },
+    setHasBeenAsked: (state, action: PayloadAction<boolean>) => {
+      state.hasBeenAsked = action.payload;
+    },
   },
 });
 
@@ -32,6 +37,7 @@ export const {
   setNotificationEnabled,
   setNotificationToken,
   setPermissionGranted,
+  setHasBeenAsked,
 } = notificationsSlice.actions;
 
 export default notificationsSlice.reducer;

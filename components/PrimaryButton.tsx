@@ -1,12 +1,14 @@
 import usePrimaryColor from "@/hooks/use-primary-color";
-import { Pressable, Text } from "react-native";
+import {Pressable, Text, ViewStyle} from "react-native";
 
 export function PrimaryButton({
-  label,
-  onPress,
-}: {
+                                label,
+                                onPress,
+                                style
+                              }: {
   label: string;
   onPress: () => void;
+  style?: ViewStyle
 }) {
   const primaryColor = usePrimaryColor();
 
@@ -14,7 +16,7 @@ export function PrimaryButton({
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      style={({ pressed }) => [
+      style={({pressed}) => [
         {
           opacity: pressed ? 0.6 : 1,
           backgroundColor: primaryColor,
@@ -23,9 +25,10 @@ export function PrimaryButton({
           borderRadius: 8,
           alignItems: "center",
         },
+        style
       ]}
     >
-      <Text style={{ color: "white", fontWeight: "600" }}>{label}</Text>
+      <Text style={{color: "white", fontWeight: "600"}}>{label}</Text>
     </Pressable>
   );
 }

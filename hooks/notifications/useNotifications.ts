@@ -1,15 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
-import { Platform } from "react-native";
+import {Platform} from "react-native";
 import Constants from "expo-constants";
-import { API_BASE_URL } from "@/features/albums/albums.utils";
+import {API_BASE_URL} from "@/features/albums/albums.utils";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -25,8 +27,8 @@ export function useNotifications() {
     useState<NotificationPermissionStatus>();
   const [notification, setNotification] =
     useState<Notifications.Notification>();
-  const notificationListener = useRef<Notifications.Subscription>();
-  const responseListener = useRef<Notifications.Subscription>();
+  const notificationListener = useRef<Notifications.Subscription | null>(null);
+  const responseListener = useRef<Notifications.Subscription | null>(null);
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) => {
@@ -50,12 +52,10 @@ export function useNotifications() {
 
     return () => {
       if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(
-          notificationListener.current
-        );
+        notificationListener.current.remove();
       }
       if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
+        responseListener.current.remove();
       }
     };
   }, []);
@@ -80,7 +80,7 @@ export function useNotifications() {
 }
 
 async function getPermissionStatus(): Promise<NotificationPermissionStatus> {
-  const { status, canAskAgain } = await Notifications.getPermissionsAsync();
+  const {status, canAskAgain} = await Notifications.getPermissionsAsync();
   return {
     granted: status === "granted",
     canAskAgain,
@@ -101,12 +101,12 @@ async function registerForPushNotificationsAsync() {
   }
 
   if (Device.isDevice) {
-    const { status: existingStatus } =
+    const {status: existingStatus} =
       await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
     if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
+      const {status} = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
 
@@ -170,7 +170,7 @@ export async function unregisterToken(token: string) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ token }),
+      body: JSON.stringify({token}),
     });
     console.log("Push token unregistered");
   } catch (error) {
@@ -185,9 +185,9 @@ export async function updateTokenEnabled(token: string, enabled: boolean) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ enabled }),
+      body: JSON.stringify({enabled}),
     });
-    
+
     if (!response.ok) {
       // If update fails, try to register the token instead
       console.warn("Token update failed, attempting to register token");
