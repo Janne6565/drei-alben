@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a3b6d1e-c56f-43e9-857e-b7a3ee762205" name="Changes" comment="feat: add notification settings and handling&#10;&#10;- Introduced NotificationSettings component for managing push notifications.&#10;- Added notifications slice and selectors for Redux state management.&#10;- Implemented useNotifications hook for Expo push notification support.&#10;- Updated package.json and package-lock.json with new dependencies (`expo-notifications`, `expo-device`, and others).&#10;- Synced `.idea` project files to match the updated project configuration.">
+    <list default="true" id="1a3b6d1e-c56f-43e9-857e-b7a3ee762205" name="Changes" comment="refactor: simplify openLink function and update `.idea` workspace configuration">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/util/music-provider-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/util/music-provider-utils.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -89,7 +90,7 @@
       <updated>1722178062384</updated>
       <workItem from="1770677849117" duration="139000" />
       <workItem from="1770677993163" duration="3562000" />
-      <workItem from="1770681566090" duration="1096000" />
+      <workItem from="1770681566090" duration="1140000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add notification settings and handling&#10;&#10;- Introduced NotificationSettings component for managing push notifications.&#10;- Added notifications slice and selectors for Redux state management.&#10;- Implemented useNotifications hook for Expo push notification support.&#10;- Updated package.json and package-lock.json with new dependencies (`expo-notifications`, `expo-device`, and others).&#10;- Synced `.idea` project files to match the updated project configuration.">
       <option name="closed" value="true" />
@@ -99,7 +100,15 @@
       <option name="project" value="LOCAL" />
       <updated>1770681596049</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="refactor: simplify openLink function and update `.idea` workspace configuration">
+      <option name="closed" value="true" />
+      <created>1770682685267</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1770682685267</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -108,7 +117,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="chore: add bun.lock file for dependency management with Bun" />
     <MESSAGE value="feat: add notification settings and handling&#10;&#10;- Introduced NotificationSettings component for managing push notifications.&#10;- Added notifications slice and selectors for Redux state management.&#10;- Implemented useNotifications hook for Expo push notification support.&#10;- Updated package.json and package-lock.json with new dependencies (`expo-notifications`, `expo-device`, and others).&#10;- Synced `.idea` project files to match the updated project configuration." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add notification settings and handling&#10;&#10;- Introduced NotificationSettings component for managing push notifications.&#10;- Added notifications slice and selectors for Redux state management.&#10;- Implemented useNotifications hook for Expo push notification support.&#10;- Updated package.json and package-lock.json with new dependencies (`expo-notifications`, `expo-device`, and others).&#10;- Synced `.idea` project files to match the updated project configuration." />
+    <MESSAGE value="refactor: simplify openLink function and update `.idea` workspace configuration" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: simplify openLink function and update `.idea` workspace configuration" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

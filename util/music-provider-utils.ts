@@ -1,5 +1,9 @@
 import {Linking} from "react-native";
 
 export const openLink = async (link: string) => {
-  await Linking.openURL(link);
+  try {
+    await Linking.openURL(link);
+  } catch (e) {
+    console.error(e);
+  }
 };
