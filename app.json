@@ -24,7 +24,28 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.janne6565.bobsarchiv"
+      "package": "com.janne6565.bobsarchiv",
+      "queries": {
+        "intentFilters": [
+          {
+            "action": "android.intent.action.VIEW",
+            "data": {
+              "scheme": "spotify"
+            }
+          },
+          {
+            "action": "android.intent.action.VIEW",
+            "data": {
+              "scheme": "deezer"
+            }
+          }
+        ],
+        "package": [
+          "com.spotify.music",
+          "deezer.android.app",
+          "com.apple.android.music"
+        ]
+      }
     },
     "web": {
       "output": "static",

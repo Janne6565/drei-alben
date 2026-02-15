@@ -42,11 +42,13 @@ export const MUSIC_PLATFORMS: readonly Platform[] = [
     label: "Spotify",
     albumKey: "spotify_id",
     calculateLink: (album: AlbumDto) =>
-      appendIfExistsOtherwiseSearch(
-        album,
-        "https://open.spotify.com/intl-de/album/",
-        "https://open.spotify.com/search/"
-      ),
+      DevicePlatform.OS === "android" && album.spotify_id
+        ? () => `spotify:album:${album.spotify_id}`
+        : appendIfExistsOtherwiseSearch(
+            album,
+            "https://open.spotify.com/intl-de/album/",
+            "https://open.spotify.com/search/"
+          ),
     icon: <Entypo name="spotify" size={24} color="white" />,
   },
 
@@ -54,11 +56,13 @@ export const MUSIC_PLATFORMS: readonly Platform[] = [
     label: "Deezer",
     albumKey: "deezer_id",
     calculateLink: (album: AlbumDto) =>
-      appendIfExistsOtherwiseSearch(
-        album,
-        "https://www.deezer.com/de/album/",
-        "https://www.deezer.com/search/"
-      ),
+      DevicePlatform.OS === "android" && album.deezer_id
+        ? () => `deezer://www.deezer.com/album/${album.deezer_id}`
+        : appendIfExistsOtherwiseSearch(
+            album,
+            "https://www.deezer.com/de/album/",
+            "https://www.deezer.com/search/"
+          ),
     icon: <FontAwesome5 name="deezer" size={24} color="white" />,
   },
 ];
