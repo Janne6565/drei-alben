@@ -12,6 +12,9 @@ const initialState: ModalState = {
   historyFilter: {
     isOpen: false,
   },
+  historyInfo: {
+    isOpen: false,
+  },
   musicProvider: {
     isOpen: false,
     albumId: null,
@@ -42,6 +45,12 @@ const modalsSlice = createSlice({
     closeHistoryFilterModal: (state) => {
       state.historyFilter.isOpen = false;
     },
+    openHistoryInfoModal: (state) => {
+      state.historyInfo.isOpen = true;
+    },
+    closeHistoryInfoModal: (state) => {
+      state.historyInfo.isOpen = false;
+    },
     openMusicProviderModal: (state, action: PayloadAction<string>) => {
       state.musicProvider.isOpen = true;
       state.musicProvider.albumId = action.payload;
@@ -60,6 +69,8 @@ export const {
   closeHistoryOptionsModal,
   openHistoryFilterModal,
   closeHistoryFilterModal,
+  openHistoryInfoModal,
+  closeHistoryInfoModal,
   openMusicProviderModal,
   closeMusicProviderModal,
 } = modalsSlice.actions;
