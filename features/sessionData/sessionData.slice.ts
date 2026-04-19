@@ -5,6 +5,7 @@ const initialState: SessionDataState = {
   data: {
     currentAlbumId: "",
     seenAlbums: {},
+    albumRatings: {},
   },
 };
 
@@ -16,6 +17,7 @@ const sessionData = createSlice({
       state.data = {
         currentAlbumId: "",
         seenAlbums: {},
+        albumRatings: {},
       };
     },
     setCurrentAlbum(state, albumId: PayloadAction<string>) {
@@ -33,6 +35,15 @@ const sessionData = createSlice({
     clearSeenAlbums(state) {
       state.data.seenAlbums = {};
     },
+    setAlbumRating(
+      state,
+      action: PayloadAction<{ albumId: string; rating: number }>
+    ) {
+      state.data.albumRatings[action.payload.albumId] = action.payload.rating;
+    },
+    removeAlbumRating(state, action: PayloadAction<string>) {
+      delete state.data.albumRatings[action.payload];
+    },
   },
 });
 
@@ -43,5 +54,7 @@ export const {
   dismissAlbum,
   setAlbumToSeen,
   clearSeenAlbums,
+  setAlbumRating,
+  removeAlbumRating,
 } = sessionData.actions;
 export default sessionData.reducer;

@@ -1,6 +1,5 @@
-import useSessionData from "@/features/sessionData/sessionData.hooks";
-import { setCurrentAlbumToSeen } from "@/features/sessionData/sessionData.slice";
-import { useAppDispatch } from "@/store/hooks";
+import { openRatingModal } from "@/features/modals/modals.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AlbumButton, { AlbumButtonSize } from "./AlbumButton";
 
@@ -10,13 +9,17 @@ const AlreadySeenButton = (props: {
   label?: string;
 }) => {
   const dispatch = useAppDispatch();
-  const { pickNewAlbum } = useSessionData();
+  const currentAlbumId = useAppSelector(
+    (state) => state.sessionData.data.currentAlbumId
+  );
+
   const clickHandler = () => {
     if (props.onPress) {
       props.onPress();
     } else {
-      dispatch(setCurrentAlbumToSeen());
-      pickNewAlbum();
+      dispatch(
+        openRatingModal({ albumId: currentAlbumId, shouldPickNewAlbum: true })
+      );
     }
   };
 

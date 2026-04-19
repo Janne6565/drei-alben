@@ -16,4 +16,9 @@ export type ModalState = {
     isOpen: boolean;
     albumId: string | null;
   };
+  ratingModal: {
+    isOpen: boolean;
+    albumId: string | null;
+    shouldPickNewAlbum: boolean;
+  };
 };

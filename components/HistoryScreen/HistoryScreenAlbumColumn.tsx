@@ -1,18 +1,20 @@
 import { ThemedText } from "@/components/themed-text";
-import { setAlbumToSeen } from "@/features/sessionData/sessionData.slice";
+import { openRatingModal } from "@/features/modals/modals.slice";
+import { setAlbumRating } from "@/features/sessionData/sessionData.slice";
 import { useAppDispatch } from "@/store/hooks";
 import { AlbumDto } from "@/types/albums";
-import { assertUserConfirmation } from "@/util/assert-user-confirmation";
 import { formatDate } from "@/util/format-date";
 import { Pressable, StyleSheet, View } from "react-native";
 import AlbumUnseeButton from "../AlbumButtons/AlbumUnseeButton";
 import AlreadySeenButton from "../AlbumButtons/AlreadySeenButton";
 import OpenAlbumButton from "../AlbumButtons/OpenAlbumButton";
 import LoadableImage from "../ui/loadable-image";
+import { StarRating } from "../ui/star-rating";
 
 interface HistoryScreenAlbumColumnProps {
   item: AlbumDto;
   seenAlbums: Record<string, number>;
+  albumRatings: Record<string, number>;
   openDetailsModal: (album: AlbumDto) => void;
   openModal: (album: AlbumDto) => void;
   openAlbumModal: (album: AlbumDto) => void;
@@ -21,12 +23,14 @@ interface HistoryScreenAlbumColumnProps {
 export const HistoryScreenAlbumColumn = ({
   item,
   seenAlbums,
+  albumRatings,
   openDetailsModal,
   openModal,
   openAlbumModal,
 }: HistoryScreenAlbumColumnProps) => {
   const dispatch = useAppDispatch();
   const hasBeenSeen = seenAlbums[item.id];
+  const currentRating = albumRatings[item.id] ?? 0;
 
   return (
     <Pressable onPress={() => openDetailsModal(item)} key={item.id}>
@@ -61,6 +65,15 @@ export const HistoryScreenAlbumColumn = ({
                 Gehört am: {formatDate(seenAlbums[item.id])}
               </ThemedText>
             )}
+            {hasBeenSeen && (
+              <StarRating
+                rating={currentRating}
+                onRate={(rating) =>
+                  dispatch(setAlbumRating({ albumId: item.id, rating }))
+                }
+                size={18}
+              />
+            )}
           </View>
         </View>
         <View
@@ -81,15 +94,14 @@ export const HistoryScreenAlbumColumn = ({
             />
           ) : (
             <AlreadySeenButton
-              onPress={() => {
-                assertUserConfirmation({
-                  title: "Album als gehört markieren",
-                  message: "Wollen Sie " + item.name + " als gehört markieren?",
-                  isNonDestructive: true,
-                  onConfirm: () => dispatch(setAlbumToSeen(item.id)),
-                  confirmationText: "Als gehört markieren",
-                });
-              }}
+              onPress={() =>
+                dispatch(
+                  openRatingModal({
+                    albumId: item.id,
+                    shouldPickNewAlbum: false,
+                  })
+                )
+              }
               size={"M"}
               label={"Gehört"}
             />
