@@ -15,7 +15,9 @@ import { HistoryScreenAlbumColumn } from "./HistoryScreenAlbumColumn";
 export const HistoryAlbumList = ({ albums }: { albums: AlbumDto[] }) => {
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState(false);
-  const { seenAlbums } = useAppSelector((state) => state.sessionData.data);
+  const { seenAlbums, albumRatings = {} } = useAppSelector(
+    (state) => state.sessionData.data
+  );
 
   const refreshAlbums = async () => {
     setRefreshing(true);
@@ -52,6 +54,7 @@ export const HistoryAlbumList = ({ albums }: { albums: AlbumDto[] }) => {
         <HistoryScreenAlbumColumn
           item={item}
           seenAlbums={seenAlbums}
+          albumRatings={albumRatings}
           openDetailsModal={(album) =>
             dispatch(openAlbumDetailsModal(album.id))
           }

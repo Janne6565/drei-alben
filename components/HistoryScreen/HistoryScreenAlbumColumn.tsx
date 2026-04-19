@@ -1,5 +1,8 @@
 import { ThemedText } from "@/components/themed-text";
-import { setAlbumToSeen } from "@/features/sessionData/sessionData.slice";
+import {
+  setAlbumRating,
+  setAlbumToSeen,
+} from "@/features/sessionData/sessionData.slice";
 import { useAppDispatch } from "@/store/hooks";
 import { AlbumDto } from "@/types/albums";
 import { assertUserConfirmation } from "@/util/assert-user-confirmation";
@@ -9,10 +12,12 @@ import AlbumUnseeButton from "../AlbumButtons/AlbumUnseeButton";
 import AlreadySeenButton from "../AlbumButtons/AlreadySeenButton";
 import OpenAlbumButton from "../AlbumButtons/OpenAlbumButton";
 import LoadableImage from "../ui/loadable-image";
+import { StarRating } from "../ui/star-rating";
 
 interface HistoryScreenAlbumColumnProps {
   item: AlbumDto;
   seenAlbums: Record<string, number>;
+  albumRatings: Record<string, number>;
   openDetailsModal: (album: AlbumDto) => void;
   openModal: (album: AlbumDto) => void;
   openAlbumModal: (album: AlbumDto) => void;
@@ -21,12 +26,14 @@ interface HistoryScreenAlbumColumnProps {
 export const HistoryScreenAlbumColumn = ({
   item,
   seenAlbums,
+  albumRatings,
   openDetailsModal,
   openModal,
   openAlbumModal,
 }: HistoryScreenAlbumColumnProps) => {
   const dispatch = useAppDispatch();
   const hasBeenSeen = seenAlbums[item.id];
+  const currentRating = albumRatings[item.id] ?? 0;
 
   return (
     <Pressable onPress={() => openDetailsModal(item)} key={item.id}>
@@ -60,6 +67,15 @@ export const HistoryScreenAlbumColumn = ({
               <ThemedText style={styles.albumReleaseDate} numberOfLines={1}>
                 Gehört am: {formatDate(seenAlbums[item.id])}
               </ThemedText>
+            )}
+            {hasBeenSeen && (
+              <StarRating
+                rating={currentRating}
+                onRate={(rating) =>
+                  dispatch(setAlbumRating({ albumId: item.id, rating }))
+                }
+                size={18}
+              />
             )}
           </View>
         </View>
