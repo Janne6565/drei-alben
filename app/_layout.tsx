@@ -1,5 +1,6 @@
 import { AlbumDetailsModal } from "@/components/modals/AlbumDetailsModal";
 import { MusicProviderModal } from "@/components/modals/MusicProviderModal";
+import { RatingModal } from "@/components/modals/RatingModal";
 import { NotificationPermissionModal } from "@/components/NotificationPermissionModal";
 import { fetchAlbums } from "@/features/albums/albums.thunks";
 import { fetchNarrators } from "@/features/narrators/narrators.thunks";
@@ -48,6 +49,7 @@ export default function RootLayout() {
 
                 <MusicProviderModal />
                 <AlbumDetailsModal />
+                <RatingModal />
                 <NotificationPermissionModal />
               </ThemeProvider>
             </PersistGate>

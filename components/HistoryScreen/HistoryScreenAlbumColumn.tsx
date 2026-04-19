@@ -1,11 +1,8 @@
 import { ThemedText } from "@/components/themed-text";
-import {
-  setAlbumRating,
-  setAlbumToSeen,
-} from "@/features/sessionData/sessionData.slice";
+import { openRatingModal } from "@/features/modals/modals.slice";
+import { setAlbumRating } from "@/features/sessionData/sessionData.slice";
 import { useAppDispatch } from "@/store/hooks";
 import { AlbumDto } from "@/types/albums";
-import { assertUserConfirmation } from "@/util/assert-user-confirmation";
 import { formatDate } from "@/util/format-date";
 import { Pressable, StyleSheet, View } from "react-native";
 import AlbumUnseeButton from "../AlbumButtons/AlbumUnseeButton";
@@ -97,15 +94,14 @@ export const HistoryScreenAlbumColumn = ({
             />
           ) : (
             <AlreadySeenButton
-              onPress={() => {
-                assertUserConfirmation({
-                  title: "Album als gehört markieren",
-                  message: "Wollen Sie " + item.name + " als gehört markieren?",
-                  isNonDestructive: true,
-                  onConfirm: () => dispatch(setAlbumToSeen(item.id)),
-                  confirmationText: "Als gehört markieren",
-                });
-              }}
+              onPress={() =>
+                dispatch(
+                  openRatingModal({
+                    albumId: item.id,
+                    shouldPickNewAlbum: false,
+                  })
+                )
+              }
               size={"M"}
               label={"Gehört"}
             />

@@ -19,6 +19,11 @@ const initialState: ModalState = {
     isOpen: false,
     albumId: null,
   },
+  ratingModal: {
+    isOpen: false,
+    albumId: null,
+    shouldPickNewAlbum: false,
+  },
 };
 
 const modalsSlice = createSlice({
@@ -59,6 +64,19 @@ const modalsSlice = createSlice({
       state.musicProvider.isOpen = false;
       state.musicProvider.albumId = null;
     },
+    openRatingModal: (
+      state,
+      action: PayloadAction<{ albumId: string; shouldPickNewAlbum: boolean }>
+    ) => {
+      state.ratingModal.isOpen = true;
+      state.ratingModal.albumId = action.payload.albumId;
+      state.ratingModal.shouldPickNewAlbum = action.payload.shouldPickNewAlbum;
+    },
+    closeRatingModal: (state) => {
+      state.ratingModal.isOpen = false;
+      state.ratingModal.albumId = null;
+      state.ratingModal.shouldPickNewAlbum = false;
+    },
   },
 });
 
@@ -73,6 +91,8 @@ export const {
   closeHistoryInfoModal,
   openMusicProviderModal,
   closeMusicProviderModal,
+  openRatingModal,
+  closeRatingModal,
 } = modalsSlice.actions;
 
 export default modalsSlice.reducer;
